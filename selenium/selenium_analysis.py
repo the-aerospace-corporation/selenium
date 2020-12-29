@@ -324,7 +324,11 @@ def pitch_from_sun_sensor(TL, BL, BR, TR, r, h):
 def correct_angle_coefficients(angle, coefficents):
     p = np.poly1d(coefficents)
     return p(angle)
-    
+
+def get_coeffecients(measured_angle, real_angle):
+    p = np.polyfit(measured_angle, real_angle, deg=3, full=False)
+    return p
+
 ### QE Data Tools
 
 def get_jsc_from_quantum_efficiency(quantum_efficiency, irradiance_spectrum, interpolation_method='QE'):

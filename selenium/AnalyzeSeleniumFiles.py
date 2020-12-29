@@ -1,15 +1,15 @@
 import numpy as np
-from .getLIVmultipleSeleniumFiles import getLIVmultipleSeleniumFiles
+from selenium.file_imports.getLIVmultipleSeleniumFiles import getLIVmultipleSeleniumFiles
 from .auraMLSO3Profile import auraMLSO3Profile
+from .auraOmiO3Profile import auraOmiO3Profile
 from .analyze_sts_selenium_files import analyze_sts_selenium_files
 import selenium.selenium_analysis as sa
 import selenium.press2alt as press2alt
 import pvlib
-import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
-    def __init__(self, folderpath,  ozone_mls_hdf_file=None, external_telemetry=None, qe=None, time_zone = 'US/Pacific'):
+    def __init__(self, folderpath,  ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, time_zone = 'US/Pacific'):
         getLIVmultipleSeleniumFiles.__init__(self, folderpath, time_zone)
         self.folderpath = folderpath
         self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.Jsc, self.dataframe.index)
@@ -22,7 +22,13 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
             self.dataframe = sa.combine_external_telem_with_selenium(external_telemetry, self.dataframe)
 
         if (ozone_mls_hdf_file is not None) & (qe is not None):
-            self.generate_dataframe_with_ozone_corrections(self.dataframe, ozone_mls_hdf_file, qe)
+            ozone = auraMLSO3Profile(ozone_mls_hdf_file)
+            self.generate_dataframe_with_ozone_corrections(self.dataframe, ozone, qe)
+
+        if (ozone_omi_hdf_file is not None) & (qe is not None):
+            ozone = auraOmiO3Profile(ozone_omi_hdf_file)
+            self.generate_dataframe_with_ozone_corrections(self.dataframe, ozone, qe)
+
 
         # self._pre_angle_filtered_indices = self.filtered_indices(self.x_angle_pre, self.y_angle_pre, x_angle_limit=x_angle_filter, y_angle_limit=y_angle_filter)
         # self._post_angle_filtered_indices = self.filtered_indices(self.x_angle_post, self.y_angle_post, x_angle_limit=x_angle_filter, y_angle_limit=y_angle_filter)
@@ -61,18 +67,18 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
         self.dataframe = dataframe
         return dataframe
 
-    def generate_dataframe_with_ozone_corrections(self, dataframe, ozone_file, QE):
-        ozone = auraMLSO3Profile(ozone_file)
+    def generate_dataframe_with_ozone_corrections(self, dataframe, ozone, QE):
+        # ozone = auraMLSO3Profile(ozone_file)
 
         ozone_DUs = []
         ozone_correction_factors = []
         zenith_angles = []
         for i, row in dataframe.iterrows():
             ozone_profile = ozone.get_O3_profile(row['Latitude'], row['Longitude'])
-            pressure_hPa = press2alt.altitude_to_pressure(row['Altitude']/1000)/100
+            pressure_hPa = press2alt.altitude_to_pressure(row['Altitude (m)']/1000)/100
             ozone_DU = sa.total_ozone_above_pressure(ozone_profile, pressure_hPa)
             ozone_DUs.append(ozone_DU)
-            zenith = pvlib.solarposition.get_solarposition(i, row['Latitude'], row['Longitude'], row['Altitude']).zenith.values
+            zenith = pvlib.solarposition.get_solarposition(i, row['Latitude'], row['Longitude'], row['Altitude (m)']).zenith.values
             zenith_angles.append(zenith)
             ozone_AM0 = sa.ozone_attenuated_irradiance(ozone_DU, zenith)
             ozone_correction_factor = sa.get_ozone_correction_factor(ozone_AM0, qe=QE)

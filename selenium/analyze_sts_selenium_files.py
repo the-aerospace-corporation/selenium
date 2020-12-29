@@ -2,7 +2,7 @@ import numpy as np
 import scipy as sp
 from scipy import integrate
 import selenium.selenium_analysis as sa
-from .get_multiple_sts_selenium_files import get_multiple_sts_selenium_files
+from selenium.file_imports.get_multiple_sts_selenium_files import get_multiple_sts_selenium_files
 from .auraMLSO3Profile import auraMLSO3Profile
 import selenium.solar_spectra as pc
 import pandas as pd

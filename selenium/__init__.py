@@ -1,7 +1,4 @@
-from .getLIVsingleSeleniumFile import getLIVsingleSeleniumFile
-from .getLIVmultipleSeleniumFiles import getLIVmultipleSeleniumFiles
-from .get_sts_selenium_file import get_sts_selenium_file
-from .get_multiple_sts_selenium_files import get_multiple_sts_selenium_files
+from selenium.file_imports.getLIVmultipleSeleniumFiles import getLIVmultipleSeleniumFiles
 from .AnalyzeSeleniumFiles import AnalyzeSeleniumFiles
 from .analyze_sts_selenium_files import analyze_sts_selenium_files
 from .auraOmiO3Profile import auraOmiO3Profile
@@ -11,3 +8,5 @@ from .selenium_analysis import *
 from .press2alt import *
 from .blacksky_telemetry import blacksky_telemetry
 from .constants_Se import ozone_absorption_coefficients
+from .file_imports import *
+from .AnalyzeIscTelemetryFiles import AnalyzeIscTelemetryFiles

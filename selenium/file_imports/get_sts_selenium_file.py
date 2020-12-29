@@ -2,7 +2,7 @@ import os
 import numpy as np
 from datetime import datetime
 import pytz
-import pearl.selenium.press2alt as p2a
+import selenium.press2alt as p2a
 
 class get_sts_selenium_file(object):
     def __init__(self, filepath, time_zone='US/Pacific'):

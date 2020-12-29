@@ -17,6 +17,9 @@ class getLIVsingleSeleniumFile:
         """
         self.filename = os.path.basename(liv_txt)
         self.notes = []
+        self.manufacturer = []
+        self.model = []
+        self.cell_id = []
         self.data = []
         self.xy = []
         self.Voc = []
@@ -68,7 +71,16 @@ class getLIVsingleSeleniumFile:
             xy = []
             for j in f:
                 m = j.split('\t')
-                if ('Voc (V)' in m) or ('Voc(V)' in m):
+                if ('Manufacturer' in m):
+                    self.manufacturer = m[0+1]
+
+                elif ('Model' in m):
+                    self.model = m[0+1]
+
+                elif ('Serial Number' in m):
+                    self.cell_id = m[0+1]
+
+                elif ('Voc (V)' in m) or ('Voc(V)' in m):
                     self.Voc = (float(m[0+1]))
 
                 elif ('Jsc (A/cm^2)' in m) or ('Jsc(A/cm^2)' in m):
@@ -238,6 +250,9 @@ class getLIVsingleSeleniumFile:
             # self.data = np.array(xy)
             # self.xy = self.data[:,[0,1]]
 
+        if self.Cell_Area_cm_2 == 0:
+            self.Cell_Area_cm_2 = 4
+            self.Jsc = self.Isc/self.Cell_Area_cm_2 # TODO: probably should make this 1, but most likely a safe bet because we are only using 2x2s
         self.Pmax = self.Pmax/self.Cell_Area_cm_2
         self.Jmp = self.Imax/self.Cell_Area_cm_2
         # self.time_zone_corrected = self.timezone_convert()

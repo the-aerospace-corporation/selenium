@@ -9,7 +9,7 @@ import selenium.press2alt as press2alt
 import pvlib
 import matplotlib.dates as mdates
 
-class AnalyzeVocIscTelemetryFiles(object):
+class AnalyzeVocTelemetryFiles(object):
     def __init__(self, dataframe,  ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, time_zone = 'US/Pacific'):
         # GetTelemetryData.__init__(self, folderpath)
         # self.folderpath = folderpath

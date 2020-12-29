@@ -8,14 +8,23 @@ import selenium.selenium_analysis as sa
 import selenium.press2alt as press2alt
 import pvlib
 import matplotlib.dates as mdates
+import pandas as pd
+import selenium.press2alt as p2a
 
-class AnalyzeVocTelemetryFiles(object):
-    def __init__(self, dataframe,  ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, time_zone = 'US/Pacific'):
+
+class AnalyzeIscTelemetryFiles(object):
+    def __init__(self, datetime_pd, altitude, latitude, longitude, jsc, temperature, angle_x, angle_y,   ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, time_zone = 'US/Pacific'):
+        # time should be pandas datetime
         # GetTelemetryData.__init__(self, folderpath)
         # self.folderpath = folderpath
-        self.dataframe = dataframe
-        self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.Jsc, self.dataframe.index)
-        self.dataframe['Jsc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Jsc Sun Earth Corrected'], self.dataframe['yaw'], self.dataframe['pitch'])
+        self.dataframe = pd.DataFrame([], columns = ['datetime', 'Altitude', 'Latitude', 'Longitude', 'jsc', 'Temperature (C)', 'angle_x', 'angle_y'])
+        self.dataframe['datetime'] = datetime_pd
+        self.dataframe.set_index('datetime')
+        self.dataframe.altitude = altitude
+        self.dataframe['jsc'] = jsc
+        self.dataframe['Temperature (C)'] = temperature
+        self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.jsc, self.dataframe.index)
+        self.dataframe['Jsc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Jsc Sun Earth Corrected'], self.dataframe['angle_x'], self.dataframe['angle_y'])
         
         if ozone_mls_hdf_file is not None:
             self.ozone_file = ozone_mls_hdf_file

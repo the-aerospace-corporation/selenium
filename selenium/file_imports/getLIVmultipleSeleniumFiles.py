@@ -2,10 +2,10 @@ import glob
 import os
 import numpy as np
 import pandas as pd
-from pearl.selenium.getLIVsingleSeleniumFile import getLIVsingleSeleniumFile
+from selenium.file_imports.getLIVsingleSeleniumFile import getLIVsingleSeleniumFile
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import pearl.selenium.press2alt as p2a
+import selenium.press2alt as p2a
 
 
 class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV file in the folder
@@ -15,6 +15,9 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
         if not self.files:
             self.files = glob.glob('*.c*')
         self.xy = []
+        self.manufacturer = []
+        self.model = []
+        self.cell_id = []
         self.Voc = []
         self.Jsc = []
         self.Vmax = []
@@ -59,6 +62,12 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
             l = getLIVsingleSeleniumFile(file, time_zone)
             if l.xy.any():
                 self.xy.append(l.xy)
+            if l.manufacturer:
+                self.manufacturer.append(l.manufacturer)
+            if l.model:
+                self.model.append(l.model)
+            if l.cell_id:
+                self.cell_id.append(l.cell_id)
             if isinstance(l.Voc, float):
                 self.Voc.append(l.Voc)
             if isinstance(l.Jsc, float):
@@ -138,8 +147,8 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
         dataframe['y angle pre'] = self.y_angle_pre
         dataframe['x angle post'] = self.x_angle_post
         dataframe['y angle post'] = self.y_angle_post
-        dataframe['Altitude'] = self.gps_altitude # temp fix
-        dataframe['Altitude'] = dataframe['Altitude'].replace(1e6, np.nan)
+        dataframe['Altitude (m)'] = self.gps_altitude # temp fix
+        dataframe['Altitude (m)'] = dataframe['Altitude (m)'].replace(1e6, np.nan)
         if self.pressure:
             dataframe['Pressure'] = self.pressure
             dataframe['Altitude_Pressure'] = self.altitude_from_pressure
