@@ -2,7 +2,9 @@ from setuptools import setup
 
 setup(name='selenium',
       version='1.0',
-      packages=['selenium'],
+      
+      packages=['selenium', 'selenium.file_imports'],
+      package_data={'selenium': ['data/*.txt']},
       url='',
       license='GNU GPLv3',
       install_requires=['numpy', 'scipy', 'tables', 'pandas', 'pvlib', 'pytz', 'matplotlib'],
