@@ -9,7 +9,7 @@ import selenium.press2alt as p2a
 
 
 class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV file in the folder
-    def __init__(self, folderpath, time_zone = 'US/Pacific'):
+    def __init__(self, folderpath, time_zone = 'US/Pacific', start_time=None):
         os.chdir(folderpath)
         self.files = glob.glob('*.txt')
         if not self.files:
@@ -17,6 +17,7 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
         self.xy = []
         self.manufacturer = []
         self.model = []
+        self.notes = []
         self.cell_id = []
         self.Voc = []
         self.Jsc = []
@@ -59,7 +60,7 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
 
 
         for file in self.files:
-            l = getLIVsingleSeleniumFile(file, time_zone)
+            l = getLIVsingleSeleniumFile(file, time_zone, start_time)
             if l.xy.any():
                 self.xy.append(l.xy)
             if l.manufacturer:
@@ -68,6 +69,8 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
                 self.model.append(l.model)
             if l.cell_id:
                 self.cell_id.append(l.cell_id)
+            if l.notes:
+                self.notes.append(l.notes)
             if isinstance(l.Voc, float):
                 self.Voc.append(l.Voc)
             if isinstance(l.Jsc, float):

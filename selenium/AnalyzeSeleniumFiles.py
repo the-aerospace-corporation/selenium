@@ -7,14 +7,18 @@ import selenium.selenium_analysis as sa
 import selenium.press2alt as press2alt
 import pvlib
 import matplotlib.dates as mdates
+import os
 
 class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
-    def __init__(self, folderpath,  ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, time_zone = 'US/Pacific'):
-        getLIVmultipleSeleniumFiles.__init__(self, folderpath, time_zone)
+    def __init__(self, folderpath,  ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, start_time=None, time_zone = 'US/Pacific', basic_ozone=False, lat=None, lon=None):
+        getLIVmultipleSeleniumFiles.__init__(self, folderpath, time_zone, start_time)
+
         self.folderpath = folderpath
         self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.Jsc, self.dataframe.index)
         self.dataframe['Jsc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Jsc Sun Earth Corrected'], self.dataframe['x angle post'], self.dataframe['y angle post'])
-        
+        self.dataframe['Imax Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.Imax, self.dataframe.index)
+        self.dataframe['Imax Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Imax Sun Earth Corrected'], self.dataframe['x angle post'], self.dataframe['y angle post'])
+
         if ozone_mls_hdf_file is not None:
             self.ozone_file = ozone_mls_hdf_file
 
@@ -23,7 +27,10 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
 
         if (ozone_mls_hdf_file is not None) & (qe is not None):
             ozone = auraMLSO3Profile(ozone_mls_hdf_file)
-            self.generate_dataframe_with_ozone_corrections(self.dataframe, ozone, qe)
+            if basic_ozone==True:
+                self.generate_dataframe_with_ozone_corrections_basic(self.dataframe, ozone, lat, lon, qe)
+            else:
+                self.generate_dataframe_with_ozone_corrections(self.dataframe, ozone, qe)
 
         if (ozone_omi_hdf_file is not None) & (qe is not None):
             ozone = auraOmiO3Profile(ozone_omi_hdf_file)
@@ -40,8 +47,7 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
 
     # def jsc_full_correction(self, target_temp, temp_co):
 
-    def generate_dataframe_with_ozone_corrections_basic(self, dataframe, ozone_file, lat, lon, QE):
-        ozone = auraMLSO3Profile(ozone_file)
+    def generate_dataframe_with_ozone_corrections_basic(self, dataframe, ozone, lat, lon, QE):
 
         ozone_DUs = []
         ozone_correction_factors = []
@@ -51,19 +57,21 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
             pressure_hPa = row['Pressure']/100
             ozone_DU = sa.total_ozone_above_pressure(ozone_profile, pressure_hPa)
             ozone_DUs.append(ozone_DU)
-            zenith = pvlib.solarposition.get_solarposition(i, lat, lon, altitude=row['Altitude_Pressure'], pressure=row['Pressure']).zenith.values
+            zenith = pvlib.solarposition.get_solarposition(i, lat, lon, altitude=row['Altitude_Pressure'], pressure=row['Pressure']).zenith.values[0]
             zenith_angles.append(zenith)
             ozone_AM0 = sa.ozone_attenuated_irradiance(ozone_DU, zenith)
             ozone_correction_factor = sa.get_ozone_correction_factor(ozone_AM0, qe=QE)
             ozone_correction_factors.append(ozone_correction_factor)
 
         ozone_corrected_current = dataframe['Jsc Sun Earth Angle Corrected'].values*(np.array(ozone_correction_factors))
+        ozone_corrected_current_imax = dataframe['Imax Sun Earth Angle Corrected'].values * (np.array(ozone_correction_factors))
         # print(ozone_corrected_current)
         # print(dataframe['Jsc Sun Earth Angle Corrected'].values)
         dataframe['Zenith'] = zenith_angles
         dataframe['O3 DU'] = ozone_DUs
         dataframe['O3 Correction Factor'] = ozone_correction_factors
         dataframe['Jsc_O3_corrected'] = ozone_corrected_current
+        dataframe['Imax_O3_corrected'] = ozone_corrected_current_imax
         self.dataframe = dataframe
         return dataframe
 
@@ -85,12 +93,15 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
             ozone_correction_factors.append(ozone_correction_factor)
 
         ozone_corrected_current = dataframe['Jsc Sun Earth Angle Corrected'].values*np.array(ozone_correction_factors)
+        ozone_corrected_current_imax = dataframe['Imax Sun Earth Angle Corrected'].values * (np.array(ozone_correction_factors))
+
         # print(ozone_corrected_current)
         # print(dataframe['Jsc Sun Earth Angle Corrected'].values)
         dataframe['Zenith'] = zenith_angles
         dataframe['O3 DU'] = ozone_DUs
         dataframe['O3 Correction Factor'] = ozone_correction_factors
         dataframe['Jsc_O3_corrected'] = ozone_corrected_current
+        dataframe['Imax_O3_corrected'] = ozone_corrected_current_imax
         self.dataframe = dataframe
         return dataframe
 

@@ -32,7 +32,7 @@ class blacksky_telemetry(object):
         self.longitude = self.data[:,2]
         self.altitude = self.data[:,3]
 
-        dataframe = pd.DataFrame(data = self.data[:,1:], columns=['Latitude', 'Longitude', 'Altitude'], index=pd.to_datetime(self.datetime_index, utc=True))
+        dataframe = pd.DataFrame(data = self.data[:,1:], columns=['Latitude', 'Longitude', 'Altitude (m)'], index=pd.to_datetime(self.datetime_index, utc=True))
         # dataframe = dataframe.tz_localize(time_zone)
 
         # solarposition = pvlib.solarposition.get_solarposition(time=dataframe.index, latitude=dataframe['Latitude'].values, longitude=dataframe['Longitude'].values, altitude=dataframe['Altitude'].values)

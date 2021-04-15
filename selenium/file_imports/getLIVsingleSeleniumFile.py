@@ -5,9 +5,11 @@ import pytz
 import datetime as dt
 import re
 from datetime import datetime
+import dateutil
+
 
 class getLIVsingleSeleniumFile:
-    def __init__(self,liv_txt,  time_zone = 'US/Pacific'):
+    def __init__(self,liv_txt,  time_zone = 'US/Pacific', start_time=None):
         """
         Opens and parses and single LIV file from Pearl Lab.  All parameters are pulled from the measurement and
         placed in the heard of the file, which are then broken into object attributes
@@ -50,6 +52,7 @@ class getLIVsingleSeleniumFile:
         self.firmware = []
         self.altitude = [] #Pressure Sensor temp, pressure, humidity, coversion of pressure to altitude
         self.timestamp = []
+        self.utc = []
         self.gps_date_time = [] #Data, Time
         self.gps_datetime_object = []
         self.gps_datetime_object_timestamp = []
@@ -72,13 +75,15 @@ class getLIVsingleSeleniumFile:
             for j in f:
                 m = j.split('\t')
                 if ('Manufacturer' in m):
-                    self.manufacturer = m[0+1]
+                    self.manufacturer = m[0+1].rstrip()
 
                 elif ('Model' in m):
-                    self.model = m[0+1]
+                    self.model = m[0+1].rstrip()
 
+                elif ('Notes' in m):
+                    self.notes = j.rstrip()
                 elif ('Serial Number' in m):
-                    self.cell_id = m[0+1]
+                    self.cell_id = m[0+1].rstrip()
 
                 elif ('Voc (V)' in m) or ('Voc(V)' in m):
                     self.Voc = (float(m[0+1]))
@@ -133,11 +138,21 @@ class getLIVsingleSeleniumFile:
                     local_time = pytz.timezone(time_zone).localize(local_datetime_object)
                     self.gps_datetime_object_timestamp = local_time.astimezone(pytz.utc)
 
+                elif ('UTC' in m):
+                    self.utc = (float(m[0+1]))
 
                 elif('GPS' in m):
                     self.gps_date_time = m[1] + ' ' + m[2]
-                    if (m[1].split('/')[0] == '00') or (m[1].split('/')[2] == '80') or (m[1].split('/')[2] == '0000'):
-                        local_datetime_object = datetime.fromtimestamp(self.timestamp)
+                    if (m[1].split('/')[0] == '00') or (m[1].split('/')[2] == '80') or (m[1].split('/')[2] == '0000') or (m[1].split('/')[2] == '****'):
+                        if start_time != None:
+                            start_time_utc_seconds = datetime.timestamp(dateutil.parser.parse(start_time))
+                        else:
+                            start_time_utc_seconds = 0
+                        if self.utc:
+                            local_datetime_object = datetime.fromtimestamp(self.utc+start_time_utc_seconds)
+                        else:
+                            local_datetime_object = datetime.fromtimestamp(self.timestamp)
+
                         local_time = pytz.timezone(time_zone).localize(local_datetime_object)
                         self.gps_datetime_object = local_time.astimezone(pytz.utc)
                         # print(self.timestamp)

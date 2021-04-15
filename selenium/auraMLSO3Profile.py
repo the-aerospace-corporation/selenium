@@ -1,6 +1,7 @@
 import tables
 import numpy as np
 
+
 class auraMLSO3Profile(object):
     def __init__(self, filename):
         self.filename = filename
