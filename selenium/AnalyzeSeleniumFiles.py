@@ -14,9 +14,13 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
         getLIVmultipleSeleniumFiles.__init__(self, folderpath, time_zone, start_time)
 
         self.folderpath = folderpath
-        self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.Jsc, self.dataframe.index)
+        self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe['Jsc (A/cm2)'], self.dataframe.index)
         self.dataframe['Jsc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Jsc Sun Earth Corrected'], self.dataframe['x angle post'], self.dataframe['y angle post'])
-        self.dataframe['Imax Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.Imax, self.dataframe.index)
+
+        self.dataframe['Isc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe['Isc (A)'], self.dataframe.index)
+        self.dataframe['Isc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Isc Sun Earth Corrected'], self.dataframe['x angle post'], self.dataframe['y angle post'])
+
+        self.dataframe['Imax Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe['Imax (A)'], self.dataframe.index)
         self.dataframe['Imax Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Imax Sun Earth Corrected'], self.dataframe['x angle post'], self.dataframe['y angle post'])
 
         if ozone_mls_hdf_file is not None:
@@ -57,7 +61,7 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
             pressure_hPa = row['Pressure']/100
             ozone_DU = sa.total_ozone_above_pressure(ozone_profile, pressure_hPa)
             ozone_DUs.append(ozone_DU)
-            zenith = pvlib.solarposition.get_solarposition(i, lat, lon, altitude=row['Altitude_Pressure'], pressure=row['Pressure']).zenith.values[0]
+            zenith = pvlib.solarposition.get_solarposition(i, lat, lon, altitude=row['Altitude_from_Pressure (m)'], pressure=row['Pressure']).zenith.values[0]
             zenith_angles.append(zenith)
             ozone_AM0 = sa.ozone_attenuated_irradiance(ozone_DU, zenith)
             ozone_correction_factor = sa.get_ozone_correction_factor(ozone_AM0, qe=QE)
@@ -65,6 +69,7 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
 
         ozone_corrected_current = dataframe['Jsc Sun Earth Angle Corrected'].values*(np.array(ozone_correction_factors))
         ozone_corrected_current_imax = dataframe['Imax Sun Earth Angle Corrected'].values * (np.array(ozone_correction_factors))
+        ozone_corrected_current_isc = dataframe['Isc Sun Earth Angle Corrected'].values * (np.array(ozone_correction_factors))
         # print(ozone_corrected_current)
         # print(dataframe['Jsc Sun Earth Angle Corrected'].values)
         dataframe['Zenith'] = zenith_angles
@@ -72,6 +77,7 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
         dataframe['O3 Correction Factor'] = ozone_correction_factors
         dataframe['Jsc_O3_corrected'] = ozone_corrected_current
         dataframe['Imax_O3_corrected'] = ozone_corrected_current_imax
+        dataframe['Isc_O3_corrected'] = ozone_corrected_current_isc
         self.dataframe = dataframe
         return dataframe
 

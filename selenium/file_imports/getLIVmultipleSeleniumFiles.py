@@ -17,6 +17,7 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
         self.xy = []
         self.manufacturer = []
         self.model = []
+        self.junction = []
         self.notes = []
         self.cell_id = []
         self.Voc = []
@@ -137,15 +138,15 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
         dataframe = pd.DataFrame(index=pd.to_datetime(self.gps_datetime_object, utc=True))
         # dataframe = dataframe.tz_localize(time_zone)
         # print(len(dataframe))
-        columns = ['Jsc', 'Isc', 'Voc', 'Imax', 'Vmax', 'Pmax', 'FillFactor', 'Efficiency']
-        dataframe['Jsc'] = self.Jsc
-        dataframe['Isc'] = self.Isc
-        dataframe['Voc'] = self.Voc
-        dataframe['Imax'] = self.Imax
-        dataframe['Vmax'] = self.Vmax
-        dataframe['Pmax'] = self.Pmax
+        columns = ['Jsc (A/cm2)', 'Isc (A)', 'Voc (V)', 'Imax (A)', 'Vmax (V)', 'Pmax (W)', 'FillFactor', 'Efficiency (%)']
+        dataframe['Jsc (A/cm2)'] = self.Jsc
+        dataframe['Isc (A)'] = self.Isc
+        dataframe['Voc (V)'] = self.Voc
+        dataframe['Imax (A)'] = self.Imax
+        dataframe['Vmax (V)'] = self.Vmax
+        dataframe['Pmax (W)'] = self.Pmax
         dataframe['FillFactor'] = self.FillFactor
-        dataframe['Efficiency'] = self.Efficiency
+        dataframe['Efficiency (%)'] = self.Efficiency
         dataframe['x angle pre'] = self.x_angle_pre
         dataframe['y angle pre'] = self.y_angle_pre
         dataframe['x angle post'] = self.x_angle_post
@@ -154,12 +155,12 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
         dataframe['Altitude (m)'] = dataframe['Altitude (m)'].replace(1e6, np.nan)
         if self.pressure:
             dataframe['Pressure'] = self.pressure
-            dataframe['Altitude_Pressure'] = self.altitude_from_pressure
+            dataframe['Altitude_from_Pressure (m)'] = self.altitude_from_pressure
         dataframe['Latitude'] = self.latitude
         dataframe['Longitude'] = self.longitude
         dataframe['Temperature (K)'] = self.Cell_Temperature_Kelvin
         dataframe['Temperature (C)'] = self.Cell_Temperature_Celsius
-        dataframe['ADC Temperature'] = self.adc_temperature_C
+        dataframe['ADC Temperature (C)'] = self.adc_temperature_C
         self.dataframe = dataframe
 
 

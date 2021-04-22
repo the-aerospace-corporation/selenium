@@ -22,6 +22,7 @@ class getLIVsingleSeleniumFile:
         self.manufacturer = []
         self.model = []
         self.cell_id = []
+        self.junction = []
         self.data = []
         self.xy = []
         self.Voc = []
@@ -79,9 +80,11 @@ class getLIVsingleSeleniumFile:
 
                 elif ('Model' in m):
                     self.model = m[0+1].rstrip()
+                elif ('Junction' in m):
+                    self.junction = m[0+1]
 
                 elif ('Notes' in m):
-                    self.notes = j.rstrip()
+                    self.notes = m[1].rstrip()
                 elif ('Serial Number' in m):
                     self.cell_id = m[0+1].rstrip()
 
@@ -271,6 +274,21 @@ class getLIVsingleSeleniumFile:
         self.Pmax = self.Pmax/self.Cell_Area_cm_2
         self.Jmp = self.Imax/self.Cell_Area_cm_2
         # self.time_zone_corrected = self.timezone_convert()
+        if not self.cell_id:
+            if self.notes:
+                serial_split = self.notes.split()[-1]
+                if len(serial_split.split('-'))<2:
+                    serial_num = self.notes.split()[-2]+'-'+self.notes.split()[-1]
+                elif len(serial_split.split('-'))==2:
+                    serial_num = serial_split
+                else:
+                    serial_num = []
+
+                self.cell_id = serial_num
+
+        if not self.model:
+            if self.notes:
+                self.model = self.notes.split()[0]
 
     def plotIV(self):
         plt.plot(self.xy[:,0],self.xy[:,1], '-o', lw = 1, label = self.filename)

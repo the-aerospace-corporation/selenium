@@ -106,7 +106,15 @@ def mg_m3_to_ppmV(mg_m3, molecular_weight=47.997, temp_K = 273.15):
     return ppmV
 
 def total_ozone_dobson_from_ppmV_vs_pressure(vmr_pressure):
-    R_air = 287.058
+    """
+    Use conversions.pdf to convert vmr data to Dobson Units
+    Args:
+        vmr_pressure: data from satellite in units vmr vs pressure
+
+    Returns:
+        total gas in Dobson units
+    """
+    R_air = 287.058 #specific gas constant for dry air
     T_o = 273.15
     C = 10*((R_air*T_o)/(sp.constants.g*sp.constants.value('standard atmosphere')))
     total_ozone_column = C*sp.integrate.trapz(vmr_pressure[:, 0]/1e-6, vmr_pressure[:, 1])
