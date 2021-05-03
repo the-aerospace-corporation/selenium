@@ -1,6 +1,6 @@
 import tables
 import numpy as np
-
+from profilehooks import profile
 
 class auraMLSO3Profile(object):
     def __init__(self, filename):
@@ -27,19 +27,22 @@ class auraMLSO3Profile(object):
         if longitude > 180:
             longitude = longitude-360.0
 
-        min_val = 5
+        # min_val = 5
+        #
+        # S = np.shape(self.latitude)
+        # ind = 0
+        #
+        # for i in range(S[0]):
+        #     if (np.abs(self.latitude[i])<360) and (np.abs(self.longitude[i])<360):
+        #         val = np.abs(latitude-self.latitude[i]) + np.abs(longitude-self.longitude[i])
+        #         if val < min_val:
+        #             # if np.sum(np.isnan(data_of_interest[x,y])) < S[2] - 1:
+        #             min_val = val
+        #             ind = i
 
-        S = np.shape(self.latitude)
-        ind = 0
-
-        for i in range(S[0]):
-            if (np.abs(self.latitude[i])<360) and (np.abs(self.longitude[i])<360):
-                val = np.abs(latitude-self.latitude[i]) + np.abs(longitude-self.longitude[i])
-                if val < min_val:
-                    # if np.sum(np.isnan(data_of_interest[x,y])) < S[2] - 1:
-                    min_val = val
-                    ind = i
-
+        filter = (np.abs(self.latitude)<360) == (np.abs(self.longitude)<360) # filtering for unreal lat and lons
+        val = np.abs(latitude - self.latitude[filter]) + np.abs(longitude - self.longitude[filter]) # subtracting lat and lon of interest then finding where its closest to zero
+        ind = np.argmin(val)
         # print ind
         # print(self.latitude[ind])
         # print(self.longitude[ind])
