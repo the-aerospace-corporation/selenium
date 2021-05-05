@@ -72,6 +72,8 @@ class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV fil
                 self.cell_id.append(l.cell_id)
             if l.notes:
                 self.notes.append(l.notes)
+            if isinstance(l.junction, float):
+                self.junction.append(l.junction)
             if isinstance(l.Voc, float):
                 self.Voc.append(l.Voc)
             if isinstance(l.Jsc, float):

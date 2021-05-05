@@ -11,7 +11,6 @@ import os
 from profilehooks import profile
 
 class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles):
-    @profile
     def __init__(self, folderpath,  ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, start_time=None, time_zone = 'US/Pacific', basic_ozone=False, lat=None, lon=None):
         getLIVmultipleSeleniumFiles.__init__(self, folderpath, time_zone, start_time)
 

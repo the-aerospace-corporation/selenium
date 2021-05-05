@@ -80,8 +80,9 @@ class getLIVsingleSeleniumFile:
 
                 elif ('Model' in m):
                     self.model = m[0+1].rstrip()
+
                 elif ('Junction' in m):
-                    self.junction = m[0+1]
+                    self.junction = float(m[0+1])
 
                 elif ('Notes' in m):
                     self.notes = m[1].rstrip()
