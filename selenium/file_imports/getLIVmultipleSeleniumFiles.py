@@ -9,7 +9,7 @@ import selenium.press2alt as p2a
 
 
 class getLIVmultipleSeleniumFiles: #opens a folder and parses each PEARL LIV file in the folder
-    def __init__(self, folderpath, time_zone = 'US/Pacific', start_time=None):
+    def __init__(self, folderpath, time_zone = 'utc', start_time=None):
         os.chdir(folderpath)
         self.files = glob.glob('*.txt')
         if not self.files:

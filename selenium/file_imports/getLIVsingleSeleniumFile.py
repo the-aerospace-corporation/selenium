@@ -9,7 +9,7 @@ import dateutil
 
 
 class getLIVsingleSeleniumFile:
-    def __init__(self,liv_txt,  time_zone = 'US/Pacific', start_time=None):
+    def __init__(self,liv_txt,  time_zone = 'utc', start_time=None):
         """
         Opens and parses and single LIV file from Pearl Lab.  All parameters are pulled from the measurement and
         placed in the heard of the file, which are then broken into object attributes
