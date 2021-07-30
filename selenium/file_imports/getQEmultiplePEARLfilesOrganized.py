@@ -54,7 +54,7 @@ class getQEmultiplePEARLfilesOrganized(QeDataContainer):
             setattr(self, attr, attr_data)
 
         self.make_dataframe()
-        self.groupedByCell_ID = self._groupByCell_ID()
+        # self.groupedByCell_ID = self._groupByCell_ID()
 
     def jscQuantumEfficiency(self, Irradiance_Spectrum=None, interpolation_method='QE'):
         if Irradiance_Spectrum is None:

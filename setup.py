@@ -1,9 +1,10 @@
+import setuptools
 from setuptools import setup
 
 setup(name='selenium',
       version='1.1',
       
-      packages=['selenium', 'selenium.file_imports'],
+      packages=setuptools.find_packages(),
       package_data={'selenium': ['data/*.txt']},
       url='',
       license='GNU GPLv3',
