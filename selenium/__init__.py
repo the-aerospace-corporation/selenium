@@ -1,4 +1,4 @@
-from selenium.file_imports.getLIVmultipleSeleniumFiles import getLIVmultipleSeleniumFiles
+from .file_imports import *
 from .AnalyzeSeleniumFiles import AnalyzeSeleniumFiles
 from .analyze_sts_selenium_files import analyze_sts_selenium_files
 from .auraOmiO3Profile import auraOmiO3Profile

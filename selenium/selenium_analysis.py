@@ -10,6 +10,7 @@ import selenium.press2alt as pa
 import selenium.solar_spectra as pc
 import selenium.constants_Se as c_Se
 from .irradianceSpectrum import irradianceSpectrum
+from operator import itemgetter
 
 # selenium_data_folder = Path('pearl/selenium/data/')
 # O3_absorption_coefficients_filepath = selenium_data_folder / 'O3_cm2_molecule_absorption_coefficients.txt'
@@ -369,6 +370,34 @@ def get_jsc_from_quantum_efficiency(quantum_efficiency, irradiance_spectrum, int
 
     return JscFromIntegration #mA/cm^2
 
+def get_jsc_from_spectral_response(spectral_response, irradiance_spectrum, interpolation_method='SR'):
+    """
+    Calculates the short circuit current density using give spectral response spectrum and irradiance spectrum
+
+    Args:
+        spectral_response (ndarray): spectral response data is x = nm and y = A/cm^2
+        irradiance_spectrum (ndarray: 2D array that has x = nm, y = W/cm^2/nm
+        interpolation_method (ndarray): 'SR' interpolates the irradiance spectrum to the spectral response spacing whereas 'Irr' interpolates the spectral response spectrum to the irradiance spectrum
+
+    Returns:
+        a single value that is in the units of mA/cm^2
+    """
+
+    irradianceSpectrum_object = irradianceSpectrum(irradiance_spectrum)
+
+    if interpolation_method == 'SR':
+        irradianceSpectrum_interpolated_to_spectralResponse = irradianceSpectrum_object.interpolate_irradiance_spectrum_to_data(spectral_response)
+        spectral_response_x_irradiance_spectrum = spectral_response[:, 1] * irradianceSpectrum_interpolated_to_spectralResponse[:, 1]
+        JscFromIntegration = sp.integrate.trapz(spectral_response_x_irradiance_spectrum, spectral_response[:, 0]) * 0.1 #0.1 converts to mA/cm^2
+
+    if interpolation_method == 'Irr':
+        spectral_response_interpolated_to_irradiance_spectrum = interpolate_larger_data_to_smaller_data(irradiance_spectrum, spectral_response)
+        irradianceSpectrum_interpolated_to_spectralResponse = irradianceSpectrum_object.interpolate_irradiance_spectrum_to_data(spectral_response_interpolated_to_irradiance_spectrum)
+        spectral_response_x_irradiance_spectrum = spectral_response_interpolated_to_irradiance_spectrum[:, 1] * irradianceSpectrum_interpolated_to_spectralResponse[:, 1]
+        JscFromIntegration = sp.integrate.trapz(spectral_response_x_irradiance_spectrum, spectral_response_interpolated_to_irradiance_spectrum[:, 0]) * 0.1  # 0.1 converts to mA/cm^2
+
+    return JscFromIntegration
+
 def interpolate_larger_data_to_smaller_data(large_data, small_data):
     min_x = np.min(small_data[:,0])
     max_x = np.max(small_data[:,0])
@@ -392,3 +421,45 @@ def interpolate_larger_data_to_smaller_data(large_data, small_data):
 
     return interpolated_large_data
 
+def average_qe_spectra(qe_spectra = []):
+    """
+
+    Args:
+        qe_spectra: list of 2d data
+
+    Returns:
+
+    """
+    wavelengths = []
+    for qe in qe_spectra:
+        wavelengths = wavelengths+list(qe[:,0])
+    wavelengths = list(np.unique(np.array(wavelengths)))
+    avg_at_all_wavelengths = []
+    for nm in wavelengths:
+        avg_at_nm = []
+        for qe in qe_spectra:
+            if nm in qe[:,0]:
+                index = np.argwhere(qe[:,0]==nm)
+                avg_at_nm.append(qe[index,1])
+        avg_at_all_wavelengths.append(np.mean(avg_at_nm))
+    avg_at_all_wavelengths = np.array(avg_at_all_wavelengths)
+    avg_spectra = np.vstack((wavelengths, avg_at_all_wavelengths)).T
+    return avg_spectra
+
+def sortTwoArrays(sortByThisArray, arrayToBeSorted):
+    zippedValues = zip(sortByThisArray, arrayToBeSorted)
+    zippedValues = sorted(zippedValues, key=itemgetter(0))
+    # zippedValues.sort(key=itemgetter(0)) #python 2.7 way
+    sortedArray1, sortedArray2 = zip(*zippedValues)
+    return np.array(sortedArray1), np.array(sortedArray2)
+
+def findIndicesofDuplicates(list = []):
+    indices = []
+    noDuplicateList = set(list)
+    for item in noDuplicateList:
+        indicesOfDuplicates = []
+        for index, itemDuplicate in enumerate(list):
+            if item == itemDuplicate:
+                indicesOfDuplicates.append(index)
+        indices.append(indicesOfDuplicates)
+    return indices
