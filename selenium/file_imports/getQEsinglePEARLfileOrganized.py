@@ -4,6 +4,7 @@ import os
 
 from selenium import selenium_analysis as sa
 from .QeDataContainer import QeDataContainer
+import selenium.solar_spectra as solar_spectra
 import dateutil
 
 class getQEsinglePEARLfileOrganized(QeDataContainer):
@@ -138,7 +139,7 @@ class getQEsinglePEARLfileOrganized(QeDataContainer):
                 self.particle = 'e'
 
         if not self.jsc:
-            self.jsc = self.jsc_quantum_efficiency(pearl.AM0_2019, interpolation_method='QE')
+            self.jsc = self.jsc_quantum_efficiency(solar_spectra.AM0, interpolation_method='QE')
 
     def jsc_quantum_efficiency(self, irradiance_spectrum, interpolation_method='QE'):
         """
