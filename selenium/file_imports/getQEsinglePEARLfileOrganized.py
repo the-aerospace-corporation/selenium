@@ -169,5 +169,12 @@ class getQEsinglePEARLfileOrganized(QeDataContainer):
     def plotQE(self, color='blue'):
         """
         Quick plot check of QE if needed
+
+        Args:
+            color:
+
+        Returns:
+
         """
+
         plt.plot(self.quantum_efficiency[:, 0], self.quantum_efficiency[:, 1], lw = 1, color=color, label = self.file_name)

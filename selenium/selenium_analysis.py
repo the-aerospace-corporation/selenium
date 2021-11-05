@@ -74,7 +74,7 @@ def correct_for_temperature(parameter, temp_of_measurment, target_temp, temperat
     return new_parameter
 
 
-def correct_current_for_sun_earth_distance(current, utc_time):
+def correct_current_for_sun_earth_distance(current, utc_time, delta_t=None):
     """
     Current current of solar cell for sun earth distance
 
@@ -85,7 +85,7 @@ def correct_current_for_sun_earth_distance(current, utc_time):
     Returns:
         Current corrected for earth sun distance
     """
-    earth_sun_distance_AU = pv.solarposition.nrel_earthsun_distance(utc_time)
+    earth_sun_distance_AU = pv.solarposition.nrel_earthsun_distance(utc_time, delta_t=delta_t)
     r2_sun = 1 / (earth_sun_distance_AU ** 2)
     earth_sun_correction = 1 / (r2_sun)
     corrected_current = current*earth_sun_correction
