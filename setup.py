@@ -2,7 +2,7 @@ import setuptools
 from setuptools import setup
 
 setup(name='selenium',
-      version='1.1',
+      version='1.11',
       
       packages=setuptools.find_packages(),
       package_data={'selenium': ['data/*.txt']},
