@@ -5,10 +5,10 @@ import numpy as np
 from selenium import selenium_analysis as sa
 from selenium.file_imports.getQEsinglePEARLfileOrganized import getQEsinglePEARLfileOrganized
 import selenium.solar_spectra as solar_spectra
-from selenium.file_imports.QeDataContainer import QeDataContainer
+from selenium.file_imports.QeSeDataContainer import QeSeDataContainer
 import pandas as pd
 
-class getQEmultiplePEARLfilesOrganized(QeDataContainer):
+class getQEmultiplePEARLfilesOrganized(QeSeDataContainer):
     """
     Give it the folder path do a folder with a bunch of pearl QE txt files and it will parse, analyze and organize all the data in to an array for each attribute. See QeDataContainer to see documentation for all available attributes
 
@@ -17,7 +17,7 @@ class getQEmultiplePEARLfilesOrganized(QeDataContainer):
     """
 
     def __init__(self, folderpath):
-        QeDataContainer.__init__(self)
+        QeSeDataContainer.__init__(self)
         os.chdir(folderpath)
         self.file_name = glob.glob('*.txt')
         attributes = list(self.__dict__.keys())

@@ -10,3 +10,4 @@ from .blacksky_telemetry import blacksky_telemetry
 from .constants_Se import ozone_absorption_coefficients
 from .file_imports import *
 from .AnalyzeIscTelemetryFiles import AnalyzeIscTelemetryFiles
+from .AnalyzeSeleniumData import AnalyzeSeleniumData

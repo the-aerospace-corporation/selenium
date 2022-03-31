@@ -14,7 +14,7 @@ class AnalyzeVocTelemetryFiles(object):
         # GetTelemetryData.__init__(self, folderpath)
         # self.folderpath = folderpath
         self.dataframe = dataframe
-        self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.Jsc, self.dataframe.index)
+        self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe.jsc, self.dataframe.index)
         self.dataframe['Jsc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Jsc Sun Earth Corrected'], self.dataframe['yaw'], self.dataframe['pitch'])
         
         if ozone_mls_hdf_file is not None:

@@ -5,12 +5,16 @@ from scipy import constants
 from scipy import integrate
 from scipy import interpolate
 from scipy import constants as c
+from scipy import stats
 import pandas as pd
 import selenium.press2alt as pa
 import selenium.solar_spectra as pc
 import selenium.constants_Se as c_Se
 from .irradianceSpectrum import irradianceSpectrum
 from operator import itemgetter
+import os
+from datetime import datetime
+import dateutil.parser
 
 # selenium_data_folder = Path('pearl/selenium/data/')
 # O3_absorption_coefficients_filepath = selenium_data_folder / 'O3_cm2_molecule_absorption_coefficients.txt'
@@ -156,7 +160,7 @@ def ozone_attenuated_irradiance(ozone_DU=0, zenith_angle=0, irradiance_spectrum=
     ozone_molecules_cm2 = ozone_DU * 2.69e16
 
     if irradiance_spectrum ==None:
-        irradiance_spectrum= np.copy(pc.AM0)
+        irradiance_spectrum= np.copy(pc.AM0_2019)
     else:
         irradiance_spectrum = irradiance_spectrum
 
@@ -186,17 +190,17 @@ def ozone_attenuated_irradiance(ozone_DU=0, zenith_angle=0, irradiance_spectrum=
     return ozone_attenuated
 
 
-def get_ozone_correction_factor(ozone_attenuated_am0, ref_spectrum=None, qe=None):
+def get_ozone_correction_factor(ozone_attenuated_am0, ref_spectrum=None, qe=None, interpolation_method='QE'):
     if isinstance(qe, list) ==False:
         qe = [qe]
 
     if ref_spectrum is None:
-        ref_spectrum=pc.AM0
+        ref_spectrum=pc.AM0_2019
 
     ozone_correction_factor = []
     for q in qe:
-        ref_jsc = get_jsc_from_quantum_efficiency(q, ref_spectrum)
-        ozone_ref_jsc = get_jsc_from_quantum_efficiency(q, ozone_attenuated_am0)
+        ref_jsc = get_jsc_from_quantum_efficiency(q, ref_spectrum, interpolation_method)
+        ozone_ref_jsc = get_jsc_from_quantum_efficiency(q, ozone_attenuated_am0, interpolation_method)
         correction = (ref_jsc/ozone_ref_jsc)
         ozone_correction_factor.append(correction)
 
@@ -239,6 +243,13 @@ def filterCorrection(dataSpectrum, transmissionSpectraofFilter):
     interpolatedFilterSpectrum = f(dataSpectrum[:, 0]) / 100
     correctedSpectrum[:, 1] = dataSpectrum[:, 1] / interpolatedFilterSpectrum
     return correctedSpectrum
+
+
+def get_temperature_coefficient(parameter, temperatures):
+    slope, intercept, r_value, p_value, std_err = stats.linregress(temperatures, parameter)
+    fits = {'slope':slope, 'intercept':intercept, 'r_value':r_value, 'p_value':p_value, 'std_err':std_err}
+    return fits
+
 
 ### STS Spectrometer Functions
 
@@ -463,3 +474,48 @@ def findIndicesofDuplicates(list = []):
                 indicesOfDuplicates.append(index)
         indices.append(indicesOfDuplicates)
     return indices
+
+### Analyzing log files
+
+def concatDirectoryFiles(dirName):
+
+    directory = os.path.join(os.getcwd(), dirName)
+
+    df = pd.DataFrame()
+
+    for subdir, dirs, files in os.walk(directory):
+
+        for filename in files:
+            df = df.append( pd.read_csv(os.path.join(dirName,filename), sep='\t', index_col=False, header=0), ignore_index=True)
+
+    return df
+
+def high_freq_data_df(selenium_flight_data_folder_path, start_time=None):
+    # LivSeDataContainer.__init__(self)
+    folders = os.listdir(selenium_flight_data_folder_path)
+
+    df_raw = concatDirectoryFiles(selenium_flight_data_folder_path)
+    df_raw['datetime'] = df_raw['GPS Date'] + " " + df_raw['GPS Time']
+    df_raw['UTC'] = pd.to_datetime(df_raw['Timestamp'], unit='s')
+    df_raw = df_raw.set_index(df_raw['UTC'])
+
+    if os.path.exists(os.path.join(os.path.dirname(selenium_flight_data_folder_path), 'TEL')):
+        telem_raw = concatDirectoryFiles(os.path.join(os.path.dirname(selenium_flight_data_folder_path), 'TEL'))
+        telem_raw['datetime'] = telem_raw['GPS Date'] + " " + telem_raw['GPS Time']
+        telem_raw['UTC'] = pd.to_datetime(telem_raw['UTC'],unit='s')
+        telem_raw = telem_raw.set_index(telem_raw['UTC'])
+
+        df =  pd.merge(df_raw, telem_raw[['MS56 Pressure(Pa)']], left_index=True, right_index=True, how='outer')
+        df['MS56 Pressure(Pa)'] = df['MS56 Pressure(Pa)'].interpolate()
+        df = df.dropna(subset=['UTC'])
+
+    else:
+        df = df_raw
+
+    if start_time != None:
+        start_time_utc_seconds = datetime.timestamp(dateutil.parser.parse(start_time))
+        df = df.set_index(df.index + pd.DateOffset(seconds=start_time_utc_seconds))
+
+    if "Altitude(m)" in df.columns:
+        df = df.rename(columns={"Altitude(m)":"Altitude (m)"})
+    return df

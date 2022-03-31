@@ -6,70 +6,22 @@ import datetime as dt
 import re
 from datetime import datetime
 import dateutil
+import selenium.press2alt as p2a
+from .LivSeDataContainer import LivSeDataContainer
 
 
-class getLIVsingleSeleniumFile:
+class getLIVsingleSeleniumFile(LivSeDataContainer):
     def __init__(self,liv_txt,  time_zone = 'utc', start_time=None):
         """
-        Opens and parses and single LIV file from Pearl Lab.  All parameters are pulled from the measurement and
+        Opens and parses and single LIV file from AMU.  All parameters are pulled from the measurement and
         placed in the heard of the file, which are then broken into object attributes
 
         Args:
             liv_txt:
         """
-        self.filename = os.path.basename(liv_txt)
-        self.notes = []
-        self.manufacturer = []
-        self.model = []
-        self.cell_id = []
-        self.junction = []
-        self.data = []
-        self.xy = []
-        self.Voc = []
-        self.Jsc = []
-        self.Vmax = []
-        self.Isc = []
-        self.Jmp = []
-        self.Imax = []
-        self.Pmax = []
-        self.FillFactor = []
-        self.Efficiency = []
-        self.Cell_Temperature_Celsius = []
-        self.Cell_Temperature_Kelvin = []
-        self.Cell_Area_cm_2 = []
-        self.AM0_constant = []
-        self.x_angle = []
-        self.y_angle = []
-        self.x_angle_pre = []
-        self.y_angle_pre = []
-        self.x_angle_post = []
-        self.y_angle_post = []
-        self.altitude = []
-        self.date = []
-        self.time = []
-
-        #Selenium Specific
-        self.address = []
-        self.firmware = []
-        self.altitude = [] #Pressure Sensor temp, pressure, humidity, coversion of pressure to altitude
-        self.timestamp = []
-        self.utc = []
-        self.gps_date_time = [] #Data, Time
-        self.gps_datetime_object = []
-        self.gps_datetime_object_timestamp = []
-        self.latitude = []
-        self.longitude = []
-        self.gps_altitude = []
-        self.gps_speed = []
-        self.gps_number_of_satellites = []
-        self.Telem = []
-        self.sweep_points = []
-        self.internal_voltage_raw = []
-        self.internal_voltage_conv = []
-        self.adc_temperature_C = []
-        self.pressure = []
-        self.pre_angle = []
-        self.post_angle = []
+        LivSeDataContainer.__init__(self)
+        attributes = list(self.__dict__.keys())
+        self.file_name = os.path.basename(liv_txt)
 
         with open(liv_txt,'rU') as f:
             xy = []
@@ -86,46 +38,69 @@ class getLIVsingleSeleniumFile:
 
                 elif ('Notes' in m):
                     self.notes = m[1].rstrip()
+
+                elif ('AMU' in m):
+                    self.amu = m[1].rstrip()
+
+                elif ('Firmware' in m):
+                    self.firmware_version = m[1].rstrip()
+
+                elif ('Address' in m):
+                    self.address = int(m[0+1], 16)
+
+                elif ('Coverglass' in m):
+                    self.coverglass = m[1].rstrip()
+
+                elif ('Energy' in m):
+                    self.energy = (float(m[0 + 1]))
+
+                elif ('Dose' in m):
+                    self.Fluence = (float(m[0 + 1]))
+
+                elif ('Telemetry' in m):
+                    m = j.rstrip().split('\t')
+                    self.telemetry = [float(n) for n in m[1:]]
+
                 elif ('Serial Number' in m):
                     self.cell_id = m[0+1].rstrip()
 
                 elif ('Voc (V)' in m) or ('Voc(V)' in m):
-                    self.Voc = (float(m[0+1]))
+                    self.voc = (float(m[0 + 1]))
 
                 elif ('Jsc (A/cm^2)' in m) or ('Jsc(A/cm^2)' in m):
-                    self.Jsc = (float(m[0+1]))
+                    self.jsc = (float(m[0 + 1]))
 
                 elif ('Vmax (V)' in m) or ('Vmax(V)' in m):
-                    self.Vmax = (float(m[0+1]))
+                    self.vmax = (float(m[0 + 1]))
 
                 elif ('Isc (A)' in m) or ('Isc(A)' in m):
-                    self.Isc = (float(m[0+1]))
+                    self.isc = (float(m[0 + 1]))
 
                 elif ('Imax (A)' in m) or ('Imax(A)' in m):
-                    self.Imax = (float(m[0+1]))
+                    self.imax = (float(m[0 + 1]))
 
                 elif ('Pmax (W)' in m) or ('Pmax(W)' in m):
-                    self.Pmax = (float(m[0+1]))
+                    self.pmax = (float(m[0 + 1]))
 
                 elif ('FF' in m):
-                    self.FillFactor = (float(m[0+1]))
+                    self.fill_factor = (float(m[0 + 1]))
 
                 elif ('Eff (%)' in m) or ('Eff(%)' in m) or ('Eff ()' in m):
-                    self.Efficiency = (float(m[0+1]))
+                    self.efficiency = (float(m[0 + 1]))
 
                 elif ('Cell Temp (C)' in m) or ('cell temp(C)' in m):
-                    self.Cell_Temperature_Celsius = (float(m[0+1]))
-                    self.Cell_Temperature_Kelvin = self.Cell_Temperature_Celsius+273.15
+                    self.cell_temperature_celsius = (float(m[0 + 1]))
+                    self.cell_temperature_kelvin = self.cell_temperature_celsius + 273.15
 
                 elif ('Cell Temp (K)' in m) or ('cell temp(K)' in m):
-                    self.Cell_Temperature_Kelvin = (float(m[0+1]))
-                    self.Cell_Temperature_Celsius = self.Cell_Temperature_Kelvin-273.15
+                    self.cell_temperature_kelvin = (float(m[0 + 1]))
+                    self.cell_temperature_celsius = self.cell_temperature_kelvin - 273.15
 
                 elif ('Cell Area (cm^2)' in m) or ('cell area(cm^2)' in m):
-                    self.Cell_Area_cm_2 = (float(m[0+1]))
+                    self.cell_area_cm_2 = (float(m[0 + 1]))
 
                 elif ('AM0 constant (W/cm^2)' in m):
-                    self.AM0_constant = (float(m[0+1]))
+                    self.am0_constant_w_cm = (float(m[0 + 1]))
                 
                 elif ('Notes' in re.findall(r'(Notes)', j)):
                     # self.notes = re.findall(r'\b(?!Notes)(?! )\b.*(?=\t)', j)[0]
@@ -159,6 +134,9 @@ class getLIVsingleSeleniumFile:
 
                         local_time = pytz.timezone(time_zone).localize(local_datetime_object)
                         self.gps_datetime_object = local_time.astimezone(pytz.utc)
+                        if self.gps_datetime_object.date() == dt.datetime(2019, 10, 7, tzinfo=pytz.timezone(time_zone)).date(): # fixing gps error in jpl 2019 flight file #8
+                            if m[1].split('/')[2] == '0000':
+                                self.gps_datetime_object = self.gps_datetime_object + dt.timedelta(hours=7)
                         # print(self.timestamp)
                         # print(local_datetime_object)
                         # print(local_time)
@@ -172,28 +150,34 @@ class getLIVsingleSeleniumFile:
 
                         try:
                             self.gps_datetime_object = datetime.strptime(self.gps_date_time, '%m/%d/%Y %H:%M:%S.%f')
+                            self.gps_datetime_object = self.gps_datetime_object.replace(tzinfo=pytz.timezone(time_zone))
                         except ValueError:
                             pass
                         try:
                             self.gps_datetime_object = datetime.strptime(self.gps_date_time, '%m/%d/%y %H:%M:%S')
+                            self.gps_datetime_object = self.gps_datetime_object.replace(tzinfo=pytz.timezone(time_zone))
                         except ValueError:
                             pass
                         try:
                             self.gps_datetime_object = datetime.strptime(self.gps_date_time, '%m/%d/%Y %H:%M:%S')
+                            self.gps_datetime_object = self.gps_datetime_object.replace(tzinfo=pytz.timezone(time_zone))
                         except:
                             print('Check GPS Timestamp in file')
 
                     else:
                         try:
                             self.gps_datetime_object = datetime.strptime(self.gps_date_time, '%m/%d/%Y %H:%M:%S.%f')
+                            self.gps_datetime_object = self.gps_datetime_object.replace(tzinfo=pytz.timezone(time_zone))
                         except ValueError:
                             pass
                         try:
                             self.gps_datetime_object = datetime.strptime(self.gps_date_time, '%m/%d/%y %H:%M:%S')
+                            self.gps_datetime_object = self.gps_datetime_object.replace(tzinfo=pytz.timezone(time_zone))
                         except ValueError:
                             pass
                         try:
                             self.gps_datetime_object = datetime.strptime(self.gps_date_time, '%m/%d/%Y %H:%M:%S')
+                            self.gps_datetime_object = self.gps_datetime_object.replace(tzinfo=pytz.timezone(time_zone))
                         except ValueError:
                             pass
 
@@ -241,11 +225,15 @@ class getLIVsingleSeleniumFile:
 
                 elif('MS5607' in m):
                     self.pressure = float(m[1])
+                    self.MS5607 = float(m[1])
+
+                elif ('BME280' in m):
+                    self.BME280 = float(m[1])
 
                 elif('ADC Temperature' in m) or ('ADC' in m):
-                    self.adc_temperature_C = float(m[1])
+                    self.adc_temperature_celsius = float(m[1])
 
-                elif ('Voltage (V)' in m) or ('voltage(V)' in m):
+                elif ('Voltage (V)' in m) or ('voltage(V)' in m):  # I think this is when/if the the 2d data has a timestamp or angle as the first column
                     if ('Voltage (V)' == m[0]) or ('voltage(V)'== m[0]):
                         data_file_version = 0
                     elif ('AMU Time(ms)' == m[0]):
@@ -269,11 +257,11 @@ class getLIVsingleSeleniumFile:
             # self.data = np.array(xy)
             # self.xy = self.data[:,[0,1]]
 
-        if self.Cell_Area_cm_2 == 0:
-            self.Cell_Area_cm_2 = 4
-            self.Jsc = self.Isc/self.Cell_Area_cm_2 # TODO: probably should make this 1, but most likely a safe bet because we are only using 2x2s
-        self.Pmax = self.Pmax/self.Cell_Area_cm_2
-        self.Jmp = self.Imax/self.Cell_Area_cm_2
+        if self.cell_area_cm_2 == 0:
+            self.cell_area_cm_2 = 4
+            self.jsc = self.isc / self.cell_area_cm_2 # TODO: probably should make this 1, but most likely a safe bet because we are only using 2x2s
+        self.pmax = self.pmax / self.cell_area_cm_2
+        self.Jmp = self.imax / self.cell_area_cm_2
         # self.time_zone_corrected = self.timezone_convert()
         if not self.cell_id:
             if self.notes:
@@ -290,6 +278,9 @@ class getLIVsingleSeleniumFile:
         if not self.model:
             if self.notes:
                 self.model = self.notes.split()[0]
+
+        if self.pressure:
+            self.altitude_from_pressure = p2a.pressure_to_altitude(self.pressure)
 
     def plotIV(self):
         plt.plot(self.xy[:,0],self.xy[:,1], '-o', lw = 1, label = self.filename)

@@ -1,4 +1,4 @@
-class QeDataContainer(object):
+class QeSeDataContainer(object):
     """
     Data containter for QE files. Typical use includes this class to be inherited by other classes. Its a way to easily add attributes to any class that has inhertied this. Allows for easy management of new and old features that have exist with pearl data files over time, past, present and future
     """

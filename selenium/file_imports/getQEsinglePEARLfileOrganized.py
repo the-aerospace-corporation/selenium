@@ -3,11 +3,11 @@ import matplotlib.pyplot as plt
 import os
 
 from selenium import selenium_analysis as sa
-from .QeDataContainer import QeDataContainer
+from .QeSeDataContainer import QeSeDataContainer
 import selenium.solar_spectra as solar_spectra
 import dateutil
 
-class getQEsinglePEARLfileOrganized(QeDataContainer):
+class getQEsinglePEARLfileOrganized(QeSeDataContainer):
     """
     Opens and parses and single LIV file from Pearl Lab.  All parameters are pulled from the measurement and
     placed in the heard of the file, which are then broken into object attributes
@@ -17,7 +17,7 @@ class getQEsinglePEARLfileOrganized(QeDataContainer):
     """
     
     def __init__(self, qe_file_path, irradiance_spectrum=None, interpolation_method=None):
-        QeDataContainer.__init__(self)
+        QeSeDataContainer.__init__(self)
         self.file_name = os.path.basename(qe_file_path)
 
         with open(qe_file_path, 'rU') as f:
