@@ -17,8 +17,8 @@ class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles, AnalyzeSeleniumData):
         AnalyzeSeleniumData.__init__(self, selenium_data_frame=self.dataframe, ozone_mls_hdf_file=ozone_mls_hdf_file, ozone_omi_hdf_file=ozone_omi_hdf_file, external_telemetry=external_telemetry, qe=qe, lat=lat, lon=lon)
         self.folderpath = folderpath
     #
-    #     self.dataframe['Jsc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe['Jsc (A/cm2)'], self.dataframe.index)
-    #     self.dataframe['Jsc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Jsc Sun Earth Corrected'], self.dataframe['x angle post'], self.dataframe['y angle post'])
+    #     self.dataframe['Jsc (A/cm2) Earth Sun Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe['Jsc (A/cm2)'], self.dataframe.index)
+    #     self.dataframe['Jsc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Jsc (A/cm2) Earth Sun Corrected'], self.dataframe['x angle post'], self.dataframe['y angle post'])
     #
     #     self.dataframe['Isc Sun Earth Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe['Isc (A)'], self.dataframe.index)
     #     self.dataframe['Isc Sun Earth Angle Corrected'] = sa.current_angle_correction(self.dataframe['Isc Sun Earth Corrected'], self.dataframe['x angle post'], self.dataframe['y angle post'])

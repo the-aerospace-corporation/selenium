@@ -486,7 +486,8 @@ def concatDirectoryFiles(dirName):
     for subdir, dirs, files in os.walk(directory):
 
         for filename in files:
-            df = df.append( pd.read_csv(os.path.join(dirName,filename), sep='\t', index_col=False, header=0), ignore_index=True)
+            # df = df.append(pd.read_csv(os.path.join(dirName,filename), sep='\t', index_col=False, header=0), ignore_index=True)
+            df = pd.concat([df, pd.read_csv(os.path.join(dirName,filename), sep='\t', index_col=False, header=0)], ignore_index=True)
 
     return df
 
