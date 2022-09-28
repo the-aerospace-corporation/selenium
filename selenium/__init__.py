@@ -3,11 +3,12 @@ from .AnalyzeSeleniumFiles import AnalyzeSeleniumFiles
 from .analyze_sts_selenium_files import analyze_sts_selenium_files
 from .auraOmiO3Profile import auraOmiO3Profile
 from .auraMLSO3Profile import auraMLSO3Profile
+from .auraMLSH2OProfile import auraMLSH2OProfile
 from .iridiumModule import iridiumModule
 from .selenium_analysis import *
 from .press2alt import *
 from .blacksky_telemetry import blacksky_telemetry
 from .constants_Se import ozone_absorption_coefficients
-from .file_imports import *
+from .constants_Se import h2o_absorption_coefficients
 from .AnalyzeIscTelemetryFiles import AnalyzeIscTelemetryFiles
 from .AnalyzeSeleniumData import AnalyzeSeleniumData

@@ -15,7 +15,8 @@ from operator import itemgetter
 import os
 from datetime import datetime
 import dateutil.parser
-
+import pytz
+from profilehooks import profile
 # selenium_data_folder = Path('pearl/selenium/data/')
 # O3_absorption_coefficients_filepath = selenium_data_folder / 'O3_cm2_molecule_absorption_coefficients.txt'
 # o3_abs_coeff = np.loadtxt(pkg_resources.resource_filename('pearl', 'selenium/data/O3_cm2_molecule_absorption_coefficients.txt'), skiprows=1)
@@ -101,7 +102,7 @@ def ppmV_to_mol_m3(ppmV, molecular_weight=47.997, temp_K = 273.15):
     R = (sp.constants.R/sp.constants.value('standard atmosphere'))*1000. # R in L atm mol-1 K-1
     mg_m3 = ppmV*(molecular_weight/(R*temp_K))
     mol_m3 = (mg_m3/1000)/molecular_weight
-    return mol_m3/1000
+    return mol_m3
 
 def mg_m3_to_ppmV(mg_m3, molecular_weight=47.997, temp_K = 273.15):
     R = (sp.constants.R/sp.constants.value('standard atmosphere'))*1000. # R in L atm mol-1 K-1
@@ -138,10 +139,12 @@ def convert_vmr_pressure_to_mol_m3_altitude_km(vmr_pressure, molecular_weight=47
     mol_m3_altitude_km = np.flip(mol_m3_altitude_km, axis=0)
     return mol_m3_altitude_km
 
+
 def total_ozone_above_pressure(ozone_profile_ppmV, pressure_limit_hPa):
-    interp_profile = sp.interpolate.interp1d(ozone_profile_ppmV[:,1], ozone_profile_ppmV[:,0])
+    # interp_profile = sp.interpolate.interp1d(np.log(ozone_profile_ppmV[:,1]), ozone_profile_ppmV[:,0])
     pressures = np.linspace(np.min(ozone_profile_ppmV[:,1]), np.max(ozone_profile_ppmV[:,1]), 1000)
-    vmr = interp_profile(pressures)
+    # vmr = interp_profile(np.log(pressures))
+    vmr = np.interp(np.log(pressures), np.log(ozone_profile_ppmV[:,1]), ozone_profile_ppmV[:,0])
     i_min = np.abs(pressures - pressure_limit_hPa).argmin()
     ozone_profile_to_integrate = np.vstack((vmr[0:i_min],pressures[0:i_min])).T
     total_ozone = total_ozone_dobson_from_ppmV_vs_pressure(ozone_profile_to_integrate)
@@ -155,29 +158,64 @@ def combine_external_telem_with_selenium(telem_dataframe, selenium_dataframe):
     new_data = new_data.dropna(axis=0)
     return new_data
 
-
 def ozone_attenuated_irradiance(ozone_DU=0, zenith_angle=0, irradiance_spectrum=None):
     ozone_molecules_cm2 = ozone_DU * 2.69e16
 
-    if irradiance_spectrum ==None:
-        irradiance_spectrum= np.copy(pc.AM0_2019)
+    if irradiance_spectrum is None:
+        irradiance_spectrum = np.copy(pc.AM0_2019)
+
+    else:
+        irradiance_spectrum = irradiance_spectrum
+
+    # min_AM0 = np.min(irradiance_spectrum[:,0])
+    # max_AM0 = np.max(irradiance_spectrum[:,0])
+    # i_min = np.abs(c_Se.ozone_absorption_coefficients[:,0] - min_AM0).argmin()
+    # i_max = np.abs(c_Se.ozone_absorption_coefficients[:,0] - max_AM0).argmin()
+    # new_ozone = c_Se.ozone_absorption_coefficients[i_min:i_max+1]
+    #
+    #
+    min_ozone = np.min(c_Se.ozone_absorption_coefficients[:,0])
+    # max_ozone = np.max(c_Se.ozone_absorption_coefficients[:,0])
+    i_min_ozone = np.abs(irradiance_spectrum[:,0] - min_ozone).argmin()
+    # i_max_ozone = np.abs(irradiance_spectrum[:,0] - max_ozone).argmin()
+    # new_irradiance_spectrum = np.copy(irradiance_spectrum[i_min_ozone+1:i_max_ozone+1])
+
+    ozone_transmission_spectrum = generate_ozone_transmission_spectrum(ozone_DU, zenith_angle=zenith_angle)
+
+    # f_interp_ozone = sp.interpolate.interp1d(ozone_transmission_spectrum[:,0], ozone_transmission_spectrum[:,1])
+    ozone_interp = np.zeros(np.shape(irradiance_spectrum[i_min_ozone+1:]))
+    ozone_interp[:,0] = irradiance_spectrum[i_min_ozone+1:,0]
+    # ozone_interp[:,1] = f_interp_ozone(irradiance_spectrum[i_min_ozone+1:,0])
+    ozone_interp[:, 1] = np.interp(irradiance_spectrum[i_min_ozone+1:,0], ozone_transmission_spectrum[:,0], ozone_transmission_spectrum[:,1])
+    ozone_attenuated = np.copy(irradiance_spectrum[i_min_ozone+1:])
+    ozone_attenuated[:,1] = irradiance_spectrum[i_min_ozone+1:,1]*ozone_interp[:,1]
+    # diff = np.copy(ozone_attenuated)
+    # diff[:,1] = ozone_attenuated[:,1] - irradiance_spectrum[i_min_ozone+1:,1]
+    return ozone_attenuated
+
+def gas_attenuated_irradiance(DU, absorption_coeff, zenith_angle=0, irradiance_spectrum=None):
+    ozone_molecules_cm2 = DU * 2.69e16
+
+    if irradiance_spectrum is None:
+        irradiance_spectrum = np.copy(pc.AM0_2019)
+
     else:
         irradiance_spectrum = irradiance_spectrum
 
     min_AM0 = np.min(irradiance_spectrum[:,0])
     max_AM0 = np.max(irradiance_spectrum[:,0])
-    i_min = np.abs(c_Se.ozone_absorption_coefficients[:,0] - min_AM0).argmin()
-    i_max = np.abs(c_Se.ozone_absorption_coefficients[:,0] - max_AM0).argmin()
-    new_ozone = c_Se.ozone_absorption_coefficients[i_min:i_max+1]
+    i_min = np.abs(absorption_coeff[:,0] - min_AM0).argmin()
+    i_max = np.abs(absorption_coeff[:,0] - max_AM0).argmin()
+    new_ozone = absorption_coeff[i_min:i_max+1]
 
 
-    min_ozone = np.min(c_Se.ozone_absorption_coefficients[:,0])
-    max_ozone = np.max(c_Se.ozone_absorption_coefficients[:,0])
+    min_ozone = np.min(absorption_coeff[:,0])
+    max_ozone = np.max(absorption_coeff[:,0])
     i_min_ozone = np.abs(irradiance_spectrum[:,0] - min_ozone).argmin()
     i_max_ozone = np.abs(irradiance_spectrum[:,0] - max_ozone).argmin()
     new_irradiance_spectrum = np.copy(irradiance_spectrum[i_min_ozone+1:i_max_ozone+1])
 
-    ozone_transmission_spectrum = generate_ozone_transmission_spectrum(ozone_DU, zenith_angle=zenith_angle)
+    ozone_transmission_spectrum = generate_gas_transmission_spectrum(DU, absorption_coeff, zenith_angle=zenith_angle)
 
     f_interp_ozone = sp.interpolate.interp1d(ozone_transmission_spectrum[:,0], ozone_transmission_spectrum[:,1])
     ozone_interp = np.zeros(np.shape(irradiance_spectrum[i_min_ozone+1:]))
@@ -189,13 +227,14 @@ def ozone_attenuated_irradiance(ozone_DU=0, zenith_angle=0, irradiance_spectrum=
     # diff[:,1] = ozone_attenuated[:,1] - irradiance_spectrum[i_min_ozone+1:,1]
     return ozone_attenuated
 
-
 def get_ozone_correction_factor(ozone_attenuated_am0, ref_spectrum=None, qe=None, interpolation_method='QE'):
     if isinstance(qe, list) ==False:
         qe = [qe]
 
     if ref_spectrum is None:
-        ref_spectrum=pc.AM0_2019
+        ref_spectrum = pc.AM0_2019
+    else:
+        ref_spectrum= ref_spectrum
 
     ozone_correction_factor = []
     for q in qe:
@@ -214,10 +253,16 @@ def correct_current_for_ozone(current, ozone_correction_factor):
 
 def generate_ozone_transmission_spectrum(ozone_DU, zenith_angle=0):
     ozone_molecules_cm2 = ozone_DU * 2.69e16
-    ozone_transmission = np.copy(c_Se.ozone_absorption_coefficients)
+    ozone_transmission = np.zeros(c_Se.ozone_absorption_coefficients.shape)
+    ozone_transmission[:,0] = c_Se.ozone_absorption_coefficients[:,0]
     ozone_transmission[:,1] = np.exp(-c_Se.ozone_absorption_coefficients[:, 1] * (ozone_molecules_cm2 / np.cos(np.deg2rad(zenith_angle))))
     return ozone_transmission
 
+def generate_gas_transmission_spectrum(DU, abs_coeff, zenith_angle=0):
+    molecules_cm2 = DU * 2.69e16
+    ozone_transmission = np.copy(abs_coeff)
+    ozone_transmission[:,1] = np.exp(-abs_coeff[:, 1] * (molecules_cm2 / np.cos(np.deg2rad(zenith_angle))))
+    return ozone_transmission
 
 def filterCorrection(dataSpectrum, transmissionSpectraofFilter):
     """
@@ -423,8 +468,9 @@ def interpolate_larger_data_to_smaller_data(large_data, small_data):
         i_max = i_max - 1
 
     x_new = large_data[i_min:i_max,0]
-    intp_func = sp.interpolate.interp1d(small_data[:,0], small_data[:,1])
-    y_new = intp_func(x_new)
+    # intp_func = sp.interpolate.interp1d(small_data[:,0], small_data[:,1])
+    # y_new = intp_func(x_new)
+    y_new = np.interp(x_new, small_data[:,0], small_data[:,1])
 
     interpolated_large_data = np.zeros((len(x_new),2))
     interpolated_large_data[:,0] = x_new
@@ -497,13 +543,13 @@ def high_freq_data_df(selenium_flight_data_folder_path, start_time=None):
 
     df_raw = concatDirectoryFiles(selenium_flight_data_folder_path)
     df_raw['datetime'] = df_raw['GPS Date'] + " " + df_raw['GPS Time']
-    df_raw['UTC'] = pd.to_datetime(df_raw['Timestamp'], unit='s')
+    df_raw['UTC'] = pd.to_datetime(df_raw['Timestamp'], unit='s', utc=True)
     df_raw = df_raw.set_index(df_raw['UTC'])
 
     if os.path.exists(os.path.join(os.path.dirname(selenium_flight_data_folder_path), 'TEL')):
         telem_raw = concatDirectoryFiles(os.path.join(os.path.dirname(selenium_flight_data_folder_path), 'TEL'))
         telem_raw['datetime'] = telem_raw['GPS Date'] + " " + telem_raw['GPS Time']
-        telem_raw['UTC'] = pd.to_datetime(telem_raw['UTC'],unit='s')
+        telem_raw['UTC'] = pd.to_datetime(telem_raw['UTC'],unit='s', utc=True)
         telem_raw = telem_raw.set_index(telem_raw['UTC'])
 
         df =  pd.merge(df_raw, telem_raw[['MS56 Pressure(Pa)']], left_index=True, right_index=True, how='outer')
@@ -514,9 +560,26 @@ def high_freq_data_df(selenium_flight_data_folder_path, start_time=None):
         df = df_raw
 
     if start_time != None:
-        start_time_utc_seconds = datetime.timestamp(dateutil.parser.parse(start_time))
+        utc_time = pytz.utc.localize(dateutil.parser.parse(start_time))
+        start_time_utc_seconds = datetime.timestamp(utc_time)
+
         df = df.set_index(df.index + pd.DateOffset(seconds=start_time_utc_seconds))
 
     if "Altitude(m)" in df.columns:
         df = df.rename(columns={"Altitude(m)":"Altitude (m)"})
     return df
+
+def correct_datetime_index_if_gps_data_was_intermittent(dataframe):
+    utc_df = pd.to_datetime(dataframe.index.asi8/1e9, unit='s')
+    # utc_df = pd.to_datetime(utc_timestamps_seconds, unit='s')
+    min_gps_time = utc_df[utc_df.year>2000].min() #looking for lower end of gps time
+    max_gps_time = utc_df[utc_df.year>2000].max() #looking for up end of gps time
+    i_min = utc_df.get_loc(min_gps_time)
+    i_max = utc_df.get_loc(max_gps_time)+1
+    utc_df_min = utc_df[:i_min] + pd.DateOffset(seconds = min_gps_time.timestamp() - utc_df[:i_min].max().timestamp()-2)
+    utc_df_max = utc_df[i_max:] + pd.DateOffset(seconds = max_gps_time.timestamp())
+    utc_below_current_time = utc_df[utc_df.year>2000]
+    new_utc_timestamps = pd.concat([pd.Series(utc_df_min), pd.Series(utc_below_current_time), pd.Series(utc_df_max)])
+    dataframe = dataframe.set_index(new_utc_timestamps)
+    return dataframe
+

@@ -282,8 +282,11 @@ class getLIVsingleSeleniumFile(LivSeDataContainer):
         if self.pressure:
             self.altitude_from_pressure = p2a.pressure_to_altitude(self.pressure)
 
+        # self.cell_name = " ".join([self.manufacturer, self.model, self.cell_id])
+        self.cell_name = " ".join([x for x in [self.manufacturer, self.model, self.cell_id] if x])
+
     def plotIV(self):
-        plt.plot(self.xy[:,0],self.xy[:,1], '-o', lw = 1, label = self.filename)
+        plt.plot(self.xy[:,0],self.xy[:,1], '-o', lw = 1, label = self.file_name)
 
     def timezone_convert(self, time_zone="America/Los_Angeles"):
         # utc_time = dt.datetime.utcfromtimestamp(self.timestamp)

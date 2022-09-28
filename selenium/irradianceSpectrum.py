@@ -63,9 +63,10 @@ class irradianceSpectrum:
     #Useful for getting irradiance spectrum in same units as any given spectrum
     #Units of x values must be in nm
     def interpolate_irradiance_spectrum_to_data(self, data_spectrum):
-        intp_data = sp.interpolate.interp1d(self.irradianceSpectrum[:, 0], self.irradianceSpectrum[:, 1], kind='linear')
+        # intp_data = sp.interpolate.interp1d(self.irradianceSpectrum[:, 0], self.irradianceSpectrum[:, 1], kind='linear')
         xnew = data_spectrum[:, 0]
-        ynew = intp_data(xnew)
+        # ynew = intp_data(xnew)
+        ynew = np.interp(xnew, self.irradianceSpectrum[:, 0], self.irradianceSpectrum[:, 1])
         irradiance_spectrum_interpolated_to_data = np.zeros((len(xnew),2))
         irradiance_spectrum_interpolated_to_data[:,0] = xnew
         irradiance_spectrum_interpolated_to_data[:,1] = ynew

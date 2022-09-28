@@ -10,6 +10,7 @@ class LivSeDataContainer(object):
         self.manufacturer = []  #: company that makes the solar cells
         self.model = []  #: solar cell model or technology
         self.cell_id = []  #: solar cell identification number or serial number
+        self.cell_name = [] #: manufacturer + model + cell_id
         self.junction = []  #: numerical junction of the solar cell with index starting at 0
         self.coverglass = []  #: if 0 there is no coverglass else the number corresponds to the thickness
         self.fluence = []  #: fluence of radiation particle (particles/cm2) if cell was irradiated

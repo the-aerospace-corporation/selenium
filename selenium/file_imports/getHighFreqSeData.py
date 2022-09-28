@@ -14,14 +14,22 @@ from .LivSeDataContainer import LivSeDataContainer
 import selenium.selenium_analysis as sa
 import datetime
 from matplotlib.dates import DayLocator, HourLocator, DateFormatter, drange
+import pvlib
 
 class getHighFreqSeData(object):
     def __init__(self, selenium_flight_data_folder_path, time_zone='utc', start_time=None):
         self.isc_df = sa.high_freq_data_df(os.path.join(selenium_flight_data_folder_path, 'ISC'), start_time=start_time)
-        self.voc_df = sa.high_freq_data_df(os.path.join(selenium_flight_data_folder_path, 'VOC'), start_time=start_time)
-        self.df = pd.concat([self.isc_df, self.voc_df]).sort_index()
-        self.df['Altitude_from_Pressure (m)'] = p2a.pressure_to_altitude(self.df['MS56 Pressure(Pa)'])
-        self.df.index = self.df.index.to_pydatetime()+datetime.timedelta(hours=-6)
+        if 'VOC' in os.listdir(selenium_flight_data_folder_path):
+            self.voc_df = sa.high_freq_data_df(os.path.join(selenium_flight_data_folder_path, 'VOC'), start_time=start_time)
+            self.df = pd.concat([self.isc_df, self.voc_df]).sort_index()
+        else:
+            self.voc_df = pd.DataFrame()
+            self.df = self.isc_df
+
+        if 'MS56 Pressure(Pa)' in self.df.columns:
+            self.df['Altitude_from_Pressure (m)'] = p2a.pressure_to_altitude(self.df['MS56 Pressure(Pa)'])
+
+        # self.df.index = self.df.index.to_pydatetime()+datetime.timedelta(hours=-6)
         os.chdir(selenium_flight_data_folder_path)
         log_files = glob.glob('*.LOG')
         self.log_data = getLogInfoSe(log_files[0])
@@ -29,15 +37,17 @@ class getHighFreqSeData(object):
         self.time_zone = time_zone
 
     def get_amu_df(self, amu_address):
-        isc_df = self.isc_df[['Latitude','Longitude', 'Altitude (m)', 'YAW', 'PITCH', 'MS56 Pressure(Pa)']].copy()
-        voc_df = self.voc_df[['Latitude','Longitude', 'Altitude (m)', 'YAW', 'PITCH', 'MS56 Pressure(Pa)']].copy()
+        # isc_df = self.isc_df[['Latitude','Longitude', 'Altitude (m)', 'YAW', 'PITCH', 'MS56 Pressure(Pa)']].copy()
+        # voc_df = self.voc_df[['Latitude','Longitude', 'Altitude (m)', 'YAW', 'PITCH', 'MS56 Pressure(Pa)']].copy()
+        isc_df = self.isc_df[[col for col in self.isc_df.columns if '-' not in col]].copy()
+        voc_df = self.voc_df[[col for col in self.voc_df.columns if '-' not in col]].copy()
         df = []
         for i, address in enumerate(self.log_data.address):
             if amu_address == address:
                 for column, data in self.isc_df.iteritems():
                     data = list(data.values.copy())
                     if str(self.log_data.amu_number[i])+'-A' == column:
-                        isc_df['ISC (A)'] = data
+                        isc_df['Isc (A)'] = data
 
                     elif str(self.log_data.amu_number[i])+'-T' == column:
                         isc_df["Temperature (C)"] = data
@@ -49,6 +59,9 @@ class getHighFreqSeData(object):
                     elif str(self.log_data.amu_number[i])+'-T' == column:
                         voc_df["Temperature (C)"] = data
                 df = pd.concat([isc_df,voc_df]).sort_index()
+
+        if 'MS56 Pressure(Pa)' in df.columns:
+            df['Altitude_from_Pressure (m)'] = p2a.pressure_to_altitude(self.df['MS56 Pressure(Pa)'])
 
         return df
 
@@ -81,7 +94,7 @@ class getHighFreqSeData(object):
                     data_obj.MS5607 = data
                     data_obj.pressure = data
                     data_obj.altitude_from_pressure = p2a.pressure_to_altitude(data_obj.pressure)
-                elif column in ['ISC (A)']:
+                elif column in ['Isc (A)']:
                     data_obj.isc = data
                 elif column in ["Voc (V)"]:
                     data_obj.voc = data

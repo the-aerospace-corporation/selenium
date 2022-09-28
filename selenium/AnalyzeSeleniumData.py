@@ -1,3 +1,4 @@
+import numpy
 import numpy as np
 from selenium.file_imports.getLIVmultipleSeleniumFiles import getLIVmultipleSeleniumFiles
 from .auraMLSO3Profile import auraMLSO3Profile
@@ -10,11 +11,13 @@ import matplotlib.dates as mdates
 import os
 from profilehooks import profile
 
-
+import selenium.solar_spectra as pc
 class AnalyzeSeleniumData(object):
-    def __init__(self, selenium_data_frame, ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, lat=None, lon=None):
+
+    def __init__(self, selenium_data_frame, ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, lat=None, lon=None, irradiance_spectrum=None):
 
         self.dataframe = selenium_data_frame
+        self.irradiance_spectrum = irradiance_spectrum
         if external_telemetry is not None:
             self.dataframe = sa.combine_external_telem_with_selenium(external_telemetry, self.dataframe)
         self.x_angles = []
@@ -22,16 +25,23 @@ class AnalyzeSeleniumData(object):
         if (ozone_mls_hdf_file is not None) & (qe is not None):
             ozone = auraMLSO3Profile(ozone_mls_hdf_file)
             if lat and lon:
-                self.generate_ozone_related_data(self.dataframe, ozone, qe, lat, lon)
+                self.generate_ozone_related_data(self.dataframe, ozone, qe, lat, lon, irradiance_spectrum)
             else:
-                self.generate_ozone_related_data(self.dataframe, ozone, qe)
+                self.generate_ozone_related_data(self.dataframe, ozone, qe, irradiance_spectrum=irradiance_spectrum)
 
         if (ozone_omi_hdf_file is not None) & (qe is not None):
             ozone = auraOmiO3Profile(ozone_omi_hdf_file)
             if lat and lon:
-                self.generate_ozone_related_data(self.dataframe, ozone, qe, lat, lon)
+                self.generate_ozone_related_data(self.dataframe, ozone, qe, lat, lon, irradiance_spectrum)
             else:
-                self.generate_ozone_related_data(self.dataframe, ozone, qe)
+                self.generate_ozone_related_data(self.dataframe, ozone, qe, irradiance_spectrum=irradiance_spectrum)
+
+        if (ozone_mls_hdf_file is not None) and (qe is None):
+            ozone = auraMLSO3Profile(ozone_mls_hdf_file)
+            if lat and lon:
+                self.generate_ozone_related_data(self.dataframe, ozone, qe, lat, lon, irradiance_spectrum)
+            else:
+                self.generate_ozone_related_data(self.dataframe, ozone, qe, irradiance_spectrum=irradiance_spectrum)
 
         if any(terms in self.dataframe.columns for terms in ['YAW', 'PITCH']):
             self.x_angles = self.dataframe['YAW']
@@ -40,6 +50,7 @@ class AnalyzeSeleniumData(object):
             self.x_angles = self.dataframe['x angle post']
             self.y_angles = self.dataframe['y angle post']
 
+        self.dataframe['Earth-Sun Distance (AU)'] = pvlib.solarposition.nrel_earthsun_distance(self.dataframe.index)
 
         if 'Jsc (A/cm2)' in self.dataframe.columns:
             self.dataframe['Jsc (A/cm2) Earth Sun Corrected'] = sa.correct_current_for_sun_earth_distance(self.dataframe['Jsc (A/cm2)'].values, self.dataframe.index)
@@ -78,9 +89,7 @@ class AnalyzeSeleniumData(object):
         if 'O3 Correction Factor' in self.dataframe.columns:
             self.dataframe[new_column_name] = self.dataframe[dataframe_column_name].values * self.dataframe['O3 Correction Factor'].values
 
-
-
-    def generate_ozone_related_data(self, dataframe, ozone, QE, lat=None, lon=None):
+    def generate_ozone_related_data(self, dataframe, ozone, QE, lat=None, lon=None, irradiance_spectrum=None):
         ozone_DUs = []
         ozone_correction_factors = []
         if 'Altitude (m)' not in dataframe.columns:
@@ -99,19 +108,47 @@ class AnalyzeSeleniumData(object):
                                                                         dataframe['Longitude'],
                                                                         altitude).zenith.values
         dataframe['Pressure (hPa)'] = dataframe['Pressure'] / 100
-        for i, row in dataframe.iterrows():
+        lat_l = None
+        lon_l = None
+        i = 0
+        for index, row in dataframe.iterrows(): # be careful with this don
             if lat and lon:
-                ozone_profile = ozone.get_O3_profile(lat, lon)
+                if (lat_l != lat) and (lon_l != lon):
+                    lat_l = lat
+                    lon_l = lon
+                    ozone_profile = ozone.get_O3_profile(lat, lon)
+
             else:
-                ozone_profile = ozone.get_O3_profile(row['Latitude'], row['Longitude'])
+                if i == 0:
+                    lat_row = row['Latitude']
+                    lon_row = row['Longitude']
+                    ozone_profile = ozone.get_O3_profile(lat_row, lon_row)
+
+                elif (lat_l != lat_row) and (lon_l != lon_row):
+                    lat_row = row['Latitude']
+                    lon_row = row['Longitude']
+                    lat_l = lat_row
+                    lon_l = lon_row
+                    ozone_profile = ozone.get_O3_profile(lat_row, lon_row)
+
+            # if ~np.array_equal(ozone_l, ozone_profile):
             ozone_DU = sa.total_ozone_above_pressure(ozone_profile, row['Pressure (hPa)'])
+            ozone_l = ozone_profile
             ozone_DUs.append(ozone_DU)
-            ozone_AM0 = sa.ozone_attenuated_irradiance(ozone_DU, row['Zenith'])
-            ozone_correction_factor = sa.get_ozone_correction_factor(ozone_AM0, qe=QE)
-            ozone_correction_factors.append(ozone_correction_factor)
+            ozone_AM0 = sa.ozone_attenuated_irradiance(ozone_DU, row['Zenith'], irradiance_spectrum)
+            if QE is not None:
+                interpolation_method='QE'
+                # ozone_correction_factor = sa.get_ozone_correction_factor(ozone_AM0, ref_spectrum=irradiance_spectrum, qe=QE, interpolation_method='Irr')
+                if i == 0:
+                    ref_jsc = sa.get_jsc_from_quantum_efficiency(QE, pc.AM0_2019 , interpolation_method)
+                ozone_ref_jsc = sa.get_jsc_from_quantum_efficiency(QE, ozone_AM0, interpolation_method)
+                ozone_correction_factor = (ref_jsc / ozone_ref_jsc)
+                ozone_correction_factors.append(ozone_correction_factor)
+            i+=1
 
         dataframe['O3 DU'] = ozone_DUs
-        dataframe['O3 Correction Factor'] = ozone_correction_factors
+        if QE is not None:
+            dataframe['O3 Correction Factor'] = ozone_correction_factors
         self.dataframe = dataframe
         return dataframe
 
@@ -204,5 +241,9 @@ class AnalyzeSeleniumData(object):
         return np.array(indices)
 
     def filter_dataframe_for_angles(self, x_angle_limit=2.5, y_angle_limit=2.5):
-        self.dataframe = self.dataframe[np.abs(self.x_angles) < x_angle_limit]
-        self.dataframe = self.dataframe[np.abs(self.y_angles) < y_angle_limit]
+        if 'YAW' in self.dataframe.columns:
+            self.dataframe = self.dataframe[np.abs(self.dataframe['YAW']) < x_angle_limit]
+            self.dataframe = self.dataframe[np.abs(self.dataframe['PITCH']) < y_angle_limit]
+        else:
+            self.dataframe = self.dataframe[np.abs(self.dataframe['x angle post']) < x_angle_limit]
+            self.dataframe = self.dataframe[np.abs(self.dataframe['y angle post']) < y_angle_limit]
