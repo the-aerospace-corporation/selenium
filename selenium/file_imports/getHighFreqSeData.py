@@ -170,7 +170,8 @@ class getHighFreqSeData(object):
             for i, address in enumerate(self.log_data.address):
                 data = self.df[str(self.log_data.amu_number[i])+'-' + param]
                 # ax.plot(x, data, '-', label = self.log_data.amu_number[i])
-                ax.plot(x, data, '.', label=self.log_data.cell_id[i])
+                cell_name = self.log_data.manufacturer[i] + ' ' + self.log_data.model[i] + ' ' + self.log_data.cell_id[i]
+                ax.plot(x, data, '.', label=cell_name)
 
 
         else:

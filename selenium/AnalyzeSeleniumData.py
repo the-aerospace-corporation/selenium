@@ -13,9 +13,19 @@ from profilehooks import profile
 
 import selenium.solar_spectra as pc
 class AnalyzeSeleniumData(object):
-
     def __init__(self, selenium_data_frame, ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, lat=None, lon=None, irradiance_spectrum=None):
+        """
 
+        Args:
+            selenium_data_frame ():
+            ozone_mls_hdf_file ():
+            ozone_omi_hdf_file ():
+            external_telemetry ():
+            qe ():
+            lat ():
+            lon ():
+            irradiance_spectrum ():
+        """
         self.dataframe = selenium_data_frame
         self.irradiance_spectrum = irradiance_spectrum
         if external_telemetry is not None:

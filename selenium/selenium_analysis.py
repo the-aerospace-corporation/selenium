@@ -90,7 +90,7 @@ def correct_current_for_sun_earth_distance(current, utc_time, delta_t=None):
     Returns:
         Current corrected for earth sun distance
     """
-    earth_sun_distance_AU = pv.solarposition.nrel_earthsun_distance(utc_time, delta_t=delta_t)
+    earth_sun_distance_AU = pv.solarposition.nrel_earthsun_distance(utc_time, delta_t=delta_t).values
     r2_sun = 1 / (earth_sun_distance_AU ** 2)
     earth_sun_correction = 1 / (r2_sun)
     corrected_current = current*earth_sun_correction
