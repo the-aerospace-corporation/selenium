@@ -10,21 +10,24 @@ import pvlib
 import matplotlib.dates as mdates
 import os
 from profilehooks import profile
+import pandas as pd
+
 
 import selenium.solar_spectra as pc
 class AnalyzeSeleniumData(object):
-    def __init__(self, selenium_data_frame, ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, lat=None, lon=None, irradiance_spectrum=None):
+    def __init__(self, selenium_data_frame, ozone_mls_hdf_file: str=None, ozone_omi_hdf_file: str=None, external_telemetry=None, qe: np.ndarray=None, lat: float=None, lon: float=None, irradiance_spectrum: np.ndarray=None):
         """
+        Takes in a dataframe of a specific format to process selenium data
 
         Args:
-            selenium_data_frame ():
-            ozone_mls_hdf_file ():
-            ozone_omi_hdf_file ():
-            external_telemetry ():
-            qe ():
-            lat ():
-            lon ():
-            irradiance_spectrum ():
+            selenium_data_frame (pd.DataFrame): A dataframe of selenium data
+            ozone_mls_hdf_file (str): The path to the ozone mls hdf file
+            ozone_omi_hdf_file (str): The path to the ozone omi hdf file
+            external_telemetry (pd.DataFrame): A dataframe of external telemetry data
+            qe (np.ndarray): A numpy array of quantum efficiency data
+            lat (float): The latitude of the location of the selenium data if GPS data was not recorder
+            lon (float): The longitude of the location of the selenium data if GPS data was not recorder
+            irradiance_spectrum (np.ndarray): A numpy array of the irradiance spectrum
         """
         self.dataframe = selenium_data_frame
         self.irradiance_spectrum = irradiance_spectrum
@@ -85,12 +88,23 @@ class AnalyzeSeleniumData(object):
         # self._pre_angle_filtered_indices = self.filtered_indices(self.x_angle_pre, self.y_angle_pre, x_angle_limit=x_angle_filter, y_angle_limit=y_angle_filter)  # self._post_angle_filtered_indices = self.filtered_indices(self.x_angle_post, self.y_angle_post, x_angle_limit=x_angle_filter, y_angle_limit=y_angle_filter)
 
     def temperature_correct_jsc(self, param, target_temp, temp_co):
+        # Depreciated
         jsc_temperature_corrected = sa.correct_for_temperature(param, self.dataframe['Temperature (C)'], target_temp,
                                                                temp_co)
         return jsc_temperature_corrected
 
     # def jsc_full_correction(self, target_temp, temp_co):
-    def ozone_correct_data(self, dataframe_column_name):
+    def ozone_correct_data(self, dataframe_column_name: str):
+        """
+        Corrects the data in the dataframe for ozone. Can be used for example with Isc (A), or Imax (A) etc.
+
+        Args:
+            dataframe_column_name (str): The name of the column in the dataframe to correct for ozone
+
+        Returns:
+            pd.DataFrame: The dataframe with the ozone corrected data
+
+        """
         if "Corrected" in dataframe_column_name.split(' '):
             new_column_name = dataframe_column_name.replace("Corrected", "O3 Corrected")
         else:
@@ -99,7 +113,21 @@ class AnalyzeSeleniumData(object):
         if 'O3 Correction Factor' in self.dataframe.columns:
             self.dataframe[new_column_name] = self.dataframe[dataframe_column_name].values * self.dataframe['O3 Correction Factor'].values
 
-    def generate_ozone_related_data(self, dataframe, ozone, QE, lat=None, lon=None, irradiance_spectrum=None):
+    def generate_ozone_related_data(self, dataframe, ozone: auraMLSO3Profile | auraOmiO3Profile, qe: np.ndarray, lat: float=None, lon: float=None, irradiance_spectrum: np.ndarray=None):
+        """
+        Generates the ozone related data such as 'O3 Correction Factor', 'O3 DU', 'Zenith', and 'Pressure (hPa)' and adds it to the dataframe.
+
+        Args:
+            dataframe (pd.DataFrame): The dataframe to generate the ozone related data for.  In the init function this is the self.dataframe or the input dataframe
+            ozone (auraMLSO3Profile | auraOmiO3Profile): The ozone profile to use for the correction
+            qe (np.ndarray): The quantum efficiency of the device where column 0 is wavelength in nm and column 1 is the quantum efficiency
+            lat (float): The latitude of the device if no gps coordinates are available
+            lon (float): The longitude of the device if no gps coordinates are available
+            irradiance_spectrum (np.ndarray): The spectrum of the irradiance where column 0 is wavelength in nm and column 1 is the irradiance
+
+        Returns:
+            pd.DataFrame: The dataframe with  ozone related data 'O3 Correction Factor', 'O3 DU', 'Zenith', and 'Pressure (hPa)' added to the dataframe
+        """
         ozone_DUs = []
         ozone_correction_factors = []
         if 'Altitude (m)' not in dataframe.columns:
@@ -146,25 +174,25 @@ class AnalyzeSeleniumData(object):
             ozone_l = ozone_profile
             ozone_DUs.append(ozone_DU)
             ozone_AM0 = sa.ozone_attenuated_irradiance(ozone_DU, row['Zenith'], irradiance_spectrum)
-            if QE is not None:
+            if qe is not None:
                 interpolation_method='QE'
                 # ozone_correction_factor = sa.get_ozone_correction_factor(ozone_AM0, ref_spectrum=irradiance_spectrum, qe=QE, interpolation_method='Irr')
                 if i == 0:
-                    ref_jsc = sa.get_jsc_from_quantum_efficiency(QE, pc.AM0_2019 , interpolation_method)
-                ozone_ref_jsc = sa.get_jsc_from_quantum_efficiency(QE, ozone_AM0, interpolation_method)
+                    ref_jsc = sa.get_jsc_from_quantum_efficiency(qe, pc.AM0_2019, interpolation_method)
+                ozone_ref_jsc = sa.get_jsc_from_quantum_efficiency(qe, ozone_AM0, interpolation_method)
                 ozone_correction_factor = (ref_jsc / ozone_ref_jsc)
                 ozone_correction_factors.append(ozone_correction_factor)
             i+=1
 
         dataframe['O3 DU'] = ozone_DUs
-        if QE is not None:
+        if qe is not None:
             dataframe['O3 Correction Factor'] = ozone_correction_factors
         self.dataframe = dataframe
         return dataframe
 
 
     def generate_dataframe_with_ozone_corrections_basic(self, dataframe, ozone, lat, lon, QE):
-
+        # Depreciated
         ozone_DUs = []
         ozone_correction_factors = []
         dataframe['Zenith'] = pvlib.solarposition.get_solarposition(dataframe.index, lat, lon,
@@ -196,6 +224,7 @@ class AnalyzeSeleniumData(object):
 
 
     def generate_dataframe_with_ozone_corrections(self, dataframe, ozone, QE):
+        # Depreciated
         # ozone = auraMLSO3Profile(ozone_file)
 
         ozone_DUs = []
