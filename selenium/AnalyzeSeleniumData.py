@@ -113,7 +113,7 @@ class AnalyzeSeleniumData(object):
         if 'O3 Correction Factor' in self.dataframe.columns:
             self.dataframe[new_column_name] = self.dataframe[dataframe_column_name].values * self.dataframe['O3 Correction Factor'].values
 
-    def generate_ozone_related_data(self, dataframe, ozone: auraMLSO3Profile | auraOmiO3Profile, qe: np.ndarray, lat: float=None, lon: float=None, irradiance_spectrum: np.ndarray=None):
+    def generate_ozone_related_data(self, dataframe, ozone: auraMLSO3Profile, qe: np.ndarray, lat: float=None, lon: float=None, irradiance_spectrum: np.ndarray=None):
         """
         Generates the ozone related data such as 'O3 Correction Factor', 'O3 DU', 'Zenith', and 'Pressure (hPa)' and adds it to the dataframe.
 
