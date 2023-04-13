@@ -35,6 +35,7 @@ class AnalyzeSeleniumData(object):
             self.dataframe = sa.combine_external_telem_with_selenium(external_telemetry, self.dataframe)
         self.x_angles = []
         self.y_angles = []
+
         if (ozone_mls_hdf_file is not None) & (qe is not None):
             ozone = auraMLSO3Profile(ozone_mls_hdf_file)
             if lat and lon:
@@ -42,12 +43,6 @@ class AnalyzeSeleniumData(object):
             else:
                 self.generate_ozone_related_data(self.dataframe, ozone, qe, irradiance_spectrum=irradiance_spectrum)
 
-        if (ozone_omi_hdf_file is not None) & (qe is not None):
-            ozone = auraOmiO3Profile(ozone_omi_hdf_file)
-            if lat and lon:
-                self.generate_ozone_related_data(self.dataframe, ozone, qe, lat, lon, irradiance_spectrum)
-            else:
-                self.generate_ozone_related_data(self.dataframe, ozone, qe, irradiance_spectrum=irradiance_spectrum)
 
         if (ozone_mls_hdf_file is not None) and (qe is None):
             ozone = auraMLSO3Profile(ozone_mls_hdf_file)
