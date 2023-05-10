@@ -4,7 +4,11 @@ Classes that take in dataframes and can output completed data frame for analysis
 
 .. autoclass:: selenium.AnalyzeSeleniumData
 
+.. autoclass:: selenium.AnalyzeSeleniumFiles
+
 .. autoclass:: selenium.auraMLSO3Profile
+
+.. autoclass:: selenium.auraOmiO3Profile
 
 Selenium Functions
 ========================================

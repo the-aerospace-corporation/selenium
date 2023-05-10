@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'selenium'
-copyright = '2022, Don Walker'
+copyright = '2023, Don Walker'
 author = 'Don Walker'
 release = '0.1'
 
