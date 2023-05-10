@@ -574,7 +574,7 @@ def correct_datetime_index_if_gps_data_was_intermittent(dataframe):
     utc_df = pd.to_datetime(dataframe.index.asi8/1e9, unit='s')
     # utc_df = pd.to_datetime(utc_timestamps_seconds, unit='s')
     min_gps_time = utc_df[utc_df.year>2000].min() #looking for lower end of gps time
-    max_gps_time = utc_df[utc_df.year>2000].max() #looking for up end of gps time
+    max_gps_time = utc_df[utc_df.year>2000].max() #looking for upper end of gps time
     i_min = utc_df.get_loc(min_gps_time)
     i_max = utc_df.get_loc(max_gps_time)+1
     utc_df_min = utc_df[:i_min] + pd.DateOffset(seconds = min_gps_time.timestamp() - utc_df[:i_min].max().timestamp()-2)
@@ -583,4 +583,40 @@ def correct_datetime_index_if_gps_data_was_intermittent(dataframe):
     new_utc_timestamps = pd.concat([pd.Series(utc_df_min), pd.Series(utc_below_current_time), pd.Series(utc_df_max)])
     dataframe = dataframe.set_index(new_utc_timestamps)
     return dataframe
+
+def standardize_selenium_dataframe(dataframe):
+    """
+    Finds column names that may be labeled funny or similar from past naming conventions and standardizes them to a common naming convention
+
+    Args:
+        dataframe (pd.DataFrame): Pandas dataframe containing selenium data
+
+    Returns:
+        dataframe (pd.DataFrame): Pandas dataframe containing selenium data with standardized column names
+    """
+    for column_name in dataframe.columns:
+        if column_name in ['MS56 Pressure(Pa)', 'Pressure (Pa)']:
+            dataframe['Pressure'] = dataframe[column_name]
+
+    return dataframe
+
+def get_temperature_coefficient_Huber(parameter, temperatures):
+    """
+    Fits a HuberRegressor to the data and returns the slope, intercept, score, and r_value.  The slope is the temperature coefficient
+
+    Args:
+        parameter (np.ndarray): any solar parameter (e.g. Jsc, Voc, FF, PCE)
+        temperatures (np.ndarray): temperature data
+
+    Returns:
+        fits (dict): dictionary containing the slope, intercept, score, and r_value of the fit where the slope is the temperature coefficient
+    """
+    fits = dict.fromkeys(['slope', 'intercept', 'score', 'r_value'])
+    huber_jsc = HuberRegressor(epsilon=1.1)
+    huber_jsc.fit(temperatures.reshape(-1, 1), parameter)
+    fits['slope'] = huber_jsc.coef_
+    fits['intercept'] = huber_jsc.intercept_
+    fits['score'] = huber_jsc.score(temperatures.reshape(-1, 1), parameter)
+    fits['r_value'] = pearl.analyzeGoodnessOfFit(parameter, fits['slope']*temperatures +fits['intercept']).r2
+    return fits
 

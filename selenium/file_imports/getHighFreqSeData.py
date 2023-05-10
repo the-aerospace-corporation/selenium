@@ -18,6 +18,14 @@ import pvlib
 
 class getHighFreqSeData(object):
     def __init__(self, selenium_flight_data_folder_path, time_zone='utc', start_time=None):
+        """
+        Parses the high frequency data from the selenium flight data folder and creates a pandas dataframe with the data.
+
+        Args:
+            selenium_flight_data_folder_path (str): Path to the selenium flight data folder.
+            time_zone (str): Time zone of the data. Default is 'utc'.
+            start_time (str): datetime string of the start time of the data. Default is None.
+        """
         self.isc_df = sa.high_freq_data_df(os.path.join(selenium_flight_data_folder_path, 'ISC'), start_time=start_time)
         if 'VOC' in os.listdir(selenium_flight_data_folder_path):
             self.voc_df = sa.high_freq_data_df(os.path.join(selenium_flight_data_folder_path, 'VOC'), start_time=start_time)
@@ -37,6 +45,14 @@ class getHighFreqSeData(object):
         self.time_zone = time_zone
 
     def get_amu_df(self, amu_address):
+        """
+        Extracts the data for a single AMU from the high frequency data and returns a dataframe that can be used in the the AnalyzeSeleniumData class.
+        Args:
+            amu_address (float): Address for a single AMU.
+
+        Returns:
+            df (pd.DataFrame): Dataframe with the data for a single AMU that can be used with the AnalyzeSeleniumData class.
+        """
         # isc_df = self.isc_df[['Latitude','Longitude', 'Altitude (m)', 'YAW', 'PITCH', 'MS56 Pressure(Pa)']].copy()
         # voc_df = self.voc_df[['Latitude','Longitude', 'Altitude (m)', 'YAW', 'PITCH', 'MS56 Pressure(Pa)']].copy()
         isc_df = self.isc_df[[col for col in self.isc_df.columns if '-' not in col]].copy()
@@ -44,7 +60,7 @@ class getHighFreqSeData(object):
         df = []
         for i, address in enumerate(self.log_data.address):
             if amu_address == address:
-                for column, data in self.isc_df.iteritems():
+                for column, data in self.isc_df.items():
                     data = list(data.values.copy())
                     if str(self.log_data.amu_number[i])+'-A' == column:
                         isc_df['Isc (A)'] = data
@@ -52,7 +68,7 @@ class getHighFreqSeData(object):
                     elif str(self.log_data.amu_number[i])+'-T' == column:
                         isc_df["Temperature (C)"] = data
 
-                for column, data in self.voc_df.iteritems():
+                for column, data in self.voc_df.items():
                     if str(self.log_data.amu_number[i])+'-V' == column:
                         voc_df["Voc (V)"] = data
 
@@ -66,6 +82,11 @@ class getHighFreqSeData(object):
         return df
 
     def getTelemMultipleSeObject(self):
+        """
+        Creates a list of LivSeDataContainer objects for each AMU in the flight.
+        Returns:
+            amu_dataobject_list (list): List of LivSeDataContainer objects for each AMU in the flight.
+        """
         amu_dataobject_list = []
         for i, address in enumerate(self.log_data.address):
             data_obj = LivSeDataContainer()
@@ -77,7 +98,7 @@ class getHighFreqSeData(object):
                 if hasattr(self.log_data.AMUs[i], attr):
                     setattr(data_obj, attr, getattr(self.log_data.AMUs[i], attr))
 
-            for column, data in amu_data.iteritems():
+            for column, data in amu_data.items():
                 data = data.values
                 if column in ['Latitude']:
                     data_obj.latitude = data
@@ -109,16 +130,27 @@ class getHighFreqSeData(object):
         return amu_dataobject_list
 
     def getTelemSingleObject(self, address):
+        """
+        Extracts the data from the ISC and VOC files and puts it into a LivDataContainer object.
+
+        Args:
+            address (): address of cell of interest
+
+        Returns:
+            data_obj (LivSeDataContainer): LivSeDataContainer object with the data for the cell of interest.
+        """
         data_obj = LivSeDataContainer()
         attributes = list(data_obj.__dict__.keys())
         amu_data = self.get_amu_df(address)
         data_obj.gps_datetime_object = amu_data.index.to_pydatetime()
 
-        for attr in attributes:
-            if hasattr(self.log_data.AMUs, attr):
-                setattr(data_obj, attr, getattr(self.log_data.AMUs, attr))
+        for i, address_of_amu in enumerate(self.log_data.address):
+            if address_of_amu == address:
+                for attr in attributes:
+                    if hasattr(self.log_data.AMUs[i], attr):
+                        setattr(data_obj, attr, getattr(self.log_data.AMUs[i], attr))
 
-        for column, data in amu_data.iteritems():
+        for column, data in amu_data.items():
             data = data.values
             if column in ['Latitude']:
                 data_obj.latitude = data
@@ -186,7 +218,17 @@ class getHighFreqSeData(object):
             label_rotation = 45
             # ax.set_xlim(date_range)
             ax.xaxis.set_major_formatter(DateFormatter(time_format))
+
     def filter_dataframe_for_angles(self, x_angle_limit=5, y_angle_limit=5):
+        """
+        Filters the dataframe for the given angle limits.
+        Args:
+            x_angle_limit (float): x angle limit in degrees
+            y_angle_limit (float): y angle limit in degrees
+
+        Returns:
+
+        """
         self.df = self.df[np.abs(self.df['PITCH']) < x_angle_limit]
         self.df = self.df[np.abs(self.df['YAW']) < y_angle_limit]
 
