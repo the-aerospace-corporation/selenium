@@ -145,7 +145,14 @@ class AnalyzeSeleniumData(object):
             dataframe['Zenith'] = pvlib.solarposition.get_solarposition(dataframe.index, dataframe['Latitude'],
                                                                         dataframe['Longitude'],
                                                                         altitude).zenith.values
-        dataframe['Pressure (hPa)'] = dataframe['Pressure'] / 100
+        
+        if ('MS56 Pressure(Pa)' in dataframe.columns):
+            pressure_Pa = dataframe['MS56 Pressure(Pa)']
+        
+        elif('Pressure' in dataframe.columns):
+            pressure_Pa = dataframe['Pressure']
+            
+        dataframe['Pressure (hPa)'] = pressure_Pa / 100
         lat_l = None
         lon_l = None
         i = 0
