@@ -1,5 +1,7 @@
 import numpy
 import numpy as np
+
+import selenium
 from selenium.file_imports.getLIVmultipleSeleniumFiles import getLIVmultipleSeleniumFiles
 from .auraMLSO3Profile import auraMLSO3Profile
 from .auraOmiO3Profile import auraOmiO3Profile
@@ -24,17 +26,18 @@ class AnalyzeSeleniumData(object):
             ozone_mls_hdf_file (str): The path to the ozone mls hdf file
             ozone_omi_hdf_file (str): The path to the ozone omi hdf file
             external_telemetry (pd.DataFrame): A dataframe of external telemetry data
-            qe (np.ndarray): A numpy array of quantum efficiency data
+            qe (np.ndarray): A numpy array of quantum efficiency data where columbn 0 is wavelength and column 1 is QE
             lat (float): The latitude of the location of the selenium data if GPS data was not recorder
             lon (float): The longitude of the location of the selenium data if GPS data was not recorder
             irradiance_spectrum (np.ndarray): A numpy array of the irradiance spectrum
         """
-        self.dataframe = selenium_data_frame
+        self.dataframe = selenium.standardize_selenium_dataframe(selenium_data_frame)
         self.irradiance_spectrum = irradiance_spectrum
         if external_telemetry is not None:
             self.dataframe = sa.combine_external_telem_with_selenium(external_telemetry, self.dataframe)
         self.x_angles = []
         self.y_angles = []
+
         if (ozone_mls_hdf_file is not None) & (qe is not None):
             ozone = auraMLSO3Profile(ozone_mls_hdf_file)
             if lat and lon:
@@ -42,12 +45,6 @@ class AnalyzeSeleniumData(object):
             else:
                 self.generate_ozone_related_data(self.dataframe, ozone, qe, irradiance_spectrum=irradiance_spectrum)
 
-        if (ozone_omi_hdf_file is not None) & (qe is not None):
-            ozone = auraOmiO3Profile(ozone_omi_hdf_file)
-            if lat and lon:
-                self.generate_ozone_related_data(self.dataframe, ozone, qe, lat, lon, irradiance_spectrum)
-            else:
-                self.generate_ozone_related_data(self.dataframe, ozone, qe, irradiance_spectrum=irradiance_spectrum)
 
         if (ozone_mls_hdf_file is not None) and (qe is None):
             ozone = auraMLSO3Profile(ozone_mls_hdf_file)
@@ -145,6 +142,7 @@ class AnalyzeSeleniumData(object):
             dataframe['Zenith'] = pvlib.solarposition.get_solarposition(dataframe.index, dataframe['Latitude'],
                                                                         dataframe['Longitude'],
                                                                         altitude).zenith.values
+
         
         if ('MS56 Pressure(Pa)' in dataframe.columns):
             pressure_Pa = dataframe['MS56 Pressure(Pa)']
@@ -293,3 +291,32 @@ class AnalyzeSeleniumData(object):
         else:
             self.dataframe = self.dataframe[np.abs(self.dataframe['x angle post']) < x_angle_limit]
             self.dataframe = self.dataframe[np.abs(self.dataframe['y angle post']) < y_angle_limit]
+
+    def filter_dataframe_for_altitude(self, min_altitude_m=24000, max_altitude_m=34000, altitude_column='Altitude_from_Pressure (m)'):
+        """
+        Filter the dataframe for a specific altitude range. You can use 'Altitude (m)' or 'Altitude_from_Pressure (m)' if you don't have gps altitude
+
+        Args:
+            min_altitude_m (float): minimum altitude in meters where 24000 is default because it is well above the tropopauseand from experience you have little atmospheic interference above this altitude
+            max_altitude_m (float): maximum altitude of the flight or where ever the balloon popped
+            altitude_column (str): 'Altitude (m)' or 'Altitude_from_Pressure (m)' if you don't have gps altitude
+
+        Returns:
+            dataframe (pd.DataFrame): dataframe filtered for altitude
+        """
+        dataframe = self.dataframe[(self.dataframe[altitude_column] > min_altitude_m) & (self.dataframe[altitude_column] < max_altitude_m)]
+        return dataframe
+
+    def filter_dataframe_for_presssure(self, max_pressure_hPa=100):
+        """
+        Filter the dataframe for a specific pressure range.
+
+        Args:
+            max_pressure_hPa (float): maximum pressure in hPa
+
+        Returns:
+            dataframe (pd.DataFrame): dataframe filtered for altitude
+        """
+        dataframe = self.dataframe[(self.dataframe['Pressure (hPa)'] < max_pressure_hPa)]
+        return dataframe
+

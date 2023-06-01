@@ -70,6 +70,11 @@ class LivSeDataContainer(object):
         self.dataframe = []  #: dataframe of all relevant values (might polish this up a bit
 
     def make_dataframe(self): #TODO: Move this to LIV data container and use it for the telem data...maybe make a dictionary mapping the column human readable names to attributes.
+        """
+        This function takes all the data from the LIV data container and puts it into a pandas dataframe.
+        Returns:
+            dataframe: pandas dataframe of all the data
+        """
         dataframe_dict = {"jsc": "Jsc (A/cm2)",
                           "isc" : "Isc (A)",
                           "voc": "Voc (V)",
