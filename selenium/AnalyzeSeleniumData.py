@@ -27,8 +27,8 @@ class AnalyzeSeleniumData(object):
             ozone_omi_hdf_file (str): The path to the ozone omi hdf file
             external_telemetry (pd.DataFrame): A dataframe of external telemetry data
             qe (np.ndarray): A numpy array of quantum efficiency data where columbn 0 is wavelength and column 1 is QE
-            lat (float): The latitude of the location of the selenium data if GPS data was not recorder
-            lon (float): The longitude of the location of the selenium data if GPS data was not recorder
+            lat (float): The latitude of the location of the selenium data if GPS data was not recorded
+            lon (float): The longitude of the location of the selenium data if GPS data was not recorded
             irradiance_spectrum (np.ndarray): A numpy array of the irradiance spectrum
         """
         self.dataframe = selenium.standardize_selenium_dataframe(selenium_data_frame)
@@ -143,7 +143,14 @@ class AnalyzeSeleniumData(object):
                                                                         dataframe['Longitude'],
                                                                         altitude).zenith.values
 
-        dataframe['Pressure (hPa)'] = dataframe['Pressure'] / 100
+        
+        if ('MS56 Pressure(Pa)' in dataframe.columns):
+            pressure_Pa = dataframe['MS56 Pressure(Pa)']
+        
+        elif('Pressure' in dataframe.columns):
+            pressure_Pa = dataframe['Pressure']
+            
+        dataframe['Pressure (hPa)'] = pressure_Pa / 100
         lat_l = None
         lon_l = None
         i = 0
