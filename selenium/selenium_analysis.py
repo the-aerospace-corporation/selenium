@@ -16,7 +16,7 @@ import os
 from datetime import datetime
 import dateutil.parser
 import pytz
-from profilehooks import profile
+# from profilehooks import profile
 # selenium_data_folder = Path('pearl/selenium/data/')
 # O3_absorption_coefficients_filepath = selenium_data_folder / 'O3_cm2_molecule_absorption_coefficients.txt'
 # o3_abs_coeff = np.loadtxt(pkg_resources.resource_filename('pearl', 'selenium/data/O3_cm2_molecule_absorption_coefficients.txt'), skiprows=1)
