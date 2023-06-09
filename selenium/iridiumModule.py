@@ -1,4 +1,5 @@
 import numpy as np
+from operator import itemgetter
 
 def sortTwoArrays(sortByThisArray, arrayToBeSorted):
     zippedValues = zip(sortByThisArray, arrayToBeSorted)
