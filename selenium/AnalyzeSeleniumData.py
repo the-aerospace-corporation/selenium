@@ -11,7 +11,7 @@ import selenium.press2alt as press2alt
 import pvlib
 import matplotlib.dates as mdates
 import os
-from profilehooks import profile
+# from profilehooks import profile
 import pandas as pd
 
 
