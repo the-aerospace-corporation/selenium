@@ -9,7 +9,7 @@ import selenium.press2alt as press2alt
 import pvlib
 import matplotlib.dates as mdates
 import os
-from profilehooks import profile
+# from profilehooks import profile
 
 class AnalyzeSeleniumFiles(getLIVmultipleSeleniumFiles, AnalyzeSeleniumData):
     def __init__(self, folderpath,  ozone_mls_hdf_file=None, ozone_omi_hdf_file=None, external_telemetry=None, qe=None, start_time=None, time_zone = 'utc', basic_ozone=False, lat=None, lon=None):
