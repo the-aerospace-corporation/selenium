@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Selenium Analysis Class &mdash; selenium 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to selenium’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            selenium
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Selenium Analysis Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#selenium-functions">Selenium Functions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">selenium</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Selenium Analysis Class</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/code.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="selenium-analysis-class">
+<h1>Selenium Analysis Class<a class="headerlink" href="#selenium-analysis-class" title="Permalink to this heading"></a></h1>
+<p>Classes that take in dataframes and can output completed data frame for analysis</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">selenium.</span></span><span class="sig-name descname"><span class="pre">AnalyzeSeleniumData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selenium_data_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ozone_mls_hdf_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ozone_omi_hdf_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">external_telemetry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irradiance_spectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Takes in a dataframe of a specific format to process selenium data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>selenium_data_frame</strong> (<em>pd.DataFrame</em>) – A dataframe of selenium data</p></li>
+<li><p><strong>ozone_mls_hdf_file</strong> (<em>str</em>) – The path to the ozone mls hdf file</p></li>
+<li><p><strong>ozone_omi_hdf_file</strong> (<em>str</em>) – The path to the ozone omi hdf file</p></li>
+<li><p><strong>external_telemetry</strong> (<em>pd.DataFrame</em>) – A dataframe of external telemetry data</p></li>
+<li><p><strong>qe</strong> (<em>np.ndarray</em>) – A numpy array of quantum efficiency data where columbn 0 is wavelength and column 1 is QE</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – The latitude of the location of the selenium data if GPS data was not recorded</p></li>
+<li><p><strong>lon</strong> (<em>float</em>) – The longitude of the location of the selenium data if GPS data was not recorded</p></li>
+<li><p><strong>irradiance_spectrum</strong> (<em>np.ndarray</em>) – A numpy array of the irradiance spectrum</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.filter_dataframe_for_altitude">
+<span class="sig-name descname"><span class="pre">filter_dataframe_for_altitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_altitude_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">24000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_altitude_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">34000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altitude_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Altitude_from_Pressure</span> <span class="pre">(m)'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.filter_dataframe_for_altitude" title="Permalink to this definition"></a></dt>
+<dd><p>Filter the dataframe for a specific altitude range. You can use ‘Altitude (m)’ or ‘Altitude_from_Pressure (m)’ if you don’t have gps altitude</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_altitude_m</strong> (<em>float</em>) – minimum altitude in meters where 24000 is default because it is well above the tropopauseand from experience you have little atmospheic interference above this altitude</p></li>
+<li><p><strong>max_altitude_m</strong> (<em>float</em>) – maximum altitude of the flight or where ever the balloon popped</p></li>
+<li><p><strong>altitude_column</strong> (<em>str</em>) – ‘Altitude (m)’ or ‘Altitude_from_Pressure (m)’ if you don’t have gps altitude</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataframe filtered for altitude</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dataframe (pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.filter_dataframe_for_angles">
+<span class="sig-name descname"><span class="pre">filter_dataframe_for_angles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_angle_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_angle_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.filter_dataframe_for_angles" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.filter_dataframe_for_presssure">
+<span class="sig-name descname"><span class="pre">filter_dataframe_for_presssure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_pressure_hPa</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.filter_dataframe_for_presssure" title="Permalink to this definition"></a></dt>
+<dd><p>Filter the dataframe for a specific pressure range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>max_pressure_hPa</strong> (<em>float</em>) – maximum pressure in hPa</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dataframe filtered for altitude</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dataframe (pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.filtered_indices">
+<span class="sig-name descname"><span class="pre">filtered_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x_angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_angle_limit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_angle_limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.filtered_indices" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.generate_dataframe_with_ozone_corrections">
+<span class="sig-name descname"><span class="pre">generate_dataframe_with_ozone_corrections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ozone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.generate_dataframe_with_ozone_corrections" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.generate_dataframe_with_ozone_corrections_basic">
+<span class="sig-name descname"><span class="pre">generate_dataframe_with_ozone_corrections_basic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ozone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">QE</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.generate_dataframe_with_ozone_corrections_basic" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.generate_dataframe_with_sts_data">
+<span class="sig-name descname"><span class="pre">generate_dataframe_with_sts_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sts_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ozone_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qe</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.generate_dataframe_with_sts_data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.generate_ozone_related_data">
+<span class="sig-name descname"><span class="pre">generate_ozone_related_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ozone</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irradiance_spectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.generate_ozone_related_data" title="Permalink to this definition"></a></dt>
+<dd><p>Generates the ozone related data such as ‘O3 Correction Factor’, ‘O3 DU’, ‘Zenith’, and ‘Pressure (hPa)’ and adds it to the dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – The dataframe to generate the ozone related data for.  In the init function this is the self.dataframe or the input dataframe</p></li>
+<li><p><strong>ozone</strong> (<a class="reference internal" href="#selenium.auraMLSO3Profile" title="selenium.auraMLSO3Profile"><em>auraMLSO3Profile</em></a><em> | </em><em>auraOmiO3Profile</em>) – The ozone profile to use for the correction</p></li>
+<li><p><strong>qe</strong> (<em>np.ndarray</em>) – The quantum efficiency of the device where column 0 is wavelength in nm and column 1 is the quantum efficiency</p></li>
+<li><p><strong>lat</strong> (<em>float</em>) – The latitude of the device if no gps coordinates are available</p></li>
+<li><p><strong>lon</strong> (<em>float</em>) – The longitude of the device if no gps coordinates are available</p></li>
+<li><p><strong>irradiance_spectrum</strong> (<em>np.ndarray</em>) – The spectrum of the irradiance where column 0 is wavelength in nm and column 1 is the irradiance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dataframe with  ozone related data ‘O3 Correction Factor’, ‘O3 DU’, ‘Zenith’, and ‘Pressure (hPa)’ added to the dataframe</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.ozone_correct_data">
+<span class="sig-name descname"><span class="pre">ozone_correct_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe_column_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.ozone_correct_data" title="Permalink to this definition"></a></dt>
+<dd><p>Corrects the data in the dataframe for ozone. Can be used for example with Isc (A), or Imax (A) etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataframe_column_name</strong> (<em>str</em>) – The name of the column in the dataframe to correct for ozone</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The dataframe with the ozone corrected data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.plot_param">
+<span class="sig-name descname"><span class="pre">plot_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'o'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.plot_param" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.AnalyzeSeleniumData.temperature_correct_jsc">
+<span class="sig-name descname"><span class="pre">temperature_correct_jsc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_co</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.AnalyzeSeleniumData.temperature_correct_jsc" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="selenium.auraMLSO3Profile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">selenium.</span></span><span class="sig-name descname"><span class="pre">auraMLSO3Profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.auraMLSO3Profile" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Takes in an AURA MLS ozone hdf file from GES DISC and processes it into a format that is useful for the selenium analysis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – an AURA MLS ozone hdf file from GES DISC</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.auraMLSO3Profile.get_O3_profile">
+<span class="sig-name descname"><span class="pre">get_O3_profile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.auraMLSO3Profile.get_O3_profile" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the ozone profile for a given latitude and longitude</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latitude</strong> (<em>float</em>) – latitude of interest</p></li>
+<li><p><strong>longitude</strong> (<em>float</em>) – longitude of interest</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ozone profile for a given latitude and longitude where column 0 is ozone and column 1 is pressure (hPa)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.auraMLSO3Profile.get_O3_profile_max">
+<span class="sig-name descname"><span class="pre">get_O3_profile_max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.auraMLSO3Profile.get_O3_profile_max" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the max ozone profile for a given latitude and longitude using precision included int the MLS file
+:param latitude: latitude of interest
+:type latitude: float
+:param longitude: longitude of interest
+:type longitude: float</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ozone profile for a given latitude and longitude where column 0 is ozone with the max precision and column 1 is pressure (hPa)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>np.ndarray</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latitude</strong> (<em>float</em>) – </p></li>
+<li><p><strong>longitude</strong> (<em>float</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="selenium.auraMLSO3Profile.get_O3_profile_min">
+<span class="sig-name descname"><span class="pre">get_O3_profile_min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latitude</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.auraMLSO3Profile.get_O3_profile_min" title="Permalink to this definition"></a></dt>
+<dd><p>Returns the min ozone profile for a given latitude and longitude using precision included int the MLS file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>latitude</strong> (<em>float</em>) – latitude of interest</p></li>
+<li><p><strong>longitude</strong> (<em>float</em>) – longitude of interest</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>ozone profile for a given latitude and longitude where column 0 is ozone with the min precision and column 1 is pressure (hPa)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="selenium-functions">
+<h1>Selenium Functions<a class="headerlink" href="#selenium-functions" title="Permalink to this heading"></a></h1>
+<p>A library of functions used to analyze selenium data</p>
+<span class="target" id="module-selenium.selenium_analysis"></span><dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.average_qe_spectra">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">average_qe_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qe_spectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.average_qe_spectra" title="Permalink to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>qe_spectra</strong> – list of 2d data</p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.calibrationCorrection">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">calibrationCorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataSpectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lampSpectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">standardLampSpectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'photon</span> <span class="pre">flux</span> <span class="pre">vs</span> <span class="pre">nm'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.calibrationCorrection" title="Permalink to this definition"></a></dt>
+<dd><p>Takes a given spectrum, such as an luminescence spectrum, and corrects it using a standard lamp spectrum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataSpectrum</strong> (<em>2-D array</em>) – the spectrum to be corrected</p></li>
+<li><p><strong>lampSpectrum</strong> (<em>2-D array</em>) – the spectrum of a lamp taken with the spectrometer to be calibrated</p></li>
+<li><p><strong>standardLampSpectrum</strong> (<em>2-D array</em>) – the known/calibrated spectrum of the lamp used, i.e. NIST Calibration</p></li>
+<li><p><strong>units</strong> (<em>2-D array</em>) – what units you wish to convert the instrument response to: ‘irradiance vs nm’, ‘photon flux vs nm’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>2-D array of dataSpectrum that has been corrected for a standard lamp spectrum</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.combine_external_telem_with_selenium">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">combine_external_telem_with_selenium</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">telem_dataframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selenium_dataframe</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.combine_external_telem_with_selenium" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.concatDirectoryFiles">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">concatDirectoryFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.concatDirectoryFiles" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.convert_vmr_pressure_to_mol_m3_altitude_km">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">convert_vmr_pressure_to_mol_m3_altitude_km</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmr_pressure</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molecular_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">47.997</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">273.15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.convert_vmr_pressure_to_mol_m3_altitude_km" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.correct_angle_coefficients">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">correct_angle_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coefficents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.correct_angle_coefficients" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.correct_current_for_ozone">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">correct_current_for_ozone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ozone_correction_factor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.correct_current_for_ozone" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.correct_current_for_sun_earth_distance">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">correct_current_for_sun_earth_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">utc_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.correct_current_for_sun_earth_distance" title="Permalink to this definition"></a></dt>
+<dd><p>Current current of solar cell for sun earth distance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current</strong> – Current of the cell</p></li>
+<li><p><strong>utc_time</strong> – Time in UTC as a python datetime object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current corrected for earth sun distance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.correct_datetime_index_if_gps_data_was_intermittent">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">correct_datetime_index_if_gps_data_was_intermittent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.correct_datetime_index_if_gps_data_was_intermittent" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.correct_for_temperature">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">correct_for_temperature</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_of_measurment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature_coeffecient</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.correct_for_temperature" title="Permalink to this definition"></a></dt>
+<dd><p>Corrects a solar cell parameter such as current or voltage to the what the value should be at a target temperature</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameter</strong> – Solar cell parameter to be corrected such as current or voltage</p></li>
+<li><p><strong>temp_of_measurement</strong> – Temperature at which the measurement was taken</p></li>
+<li><p><strong>target_temp</strong> – The target temperature at which to correct the measured parameter</p></li>
+<li><p><strong>temperature_coeffecient</strong> – The linear temperature coefficient of the parameter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parameter corrected to what its value would be at the target temperature</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.current_angle_correction">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">current_angle_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">current</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pan_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.current_angle_correction" title="Permalink to this definition"></a></dt>
+<dd><p>Corrects current for off pointing by taking the dot product of the pan and tilt angle deviation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>current</strong> – Current to be corrected such as short circuit current</p></li>
+<li><p><strong>pan_angle</strong> – The pan angle from direct incidence angle</p></li>
+<li><p><strong>tilt_angle</strong> – The tilt angle from direct incidence angle</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Current corrected to what it would be if the intensity was at an angle of incidence of 0 degrees</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.filterCorrection">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">filterCorrection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataSpectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmissionSpectraofFilter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.filterCorrection" title="Permalink to this definition"></a></dt>
+<dd><p>Corrects a spectrum by a given transmission spectrum. Interpolates the transmission spectrum to the same units
+as the dataSpectrum then the dataSpectrum is passed through the transmission spectrum given a spectrum corrected for
+a transmission spectrum of a filter</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataSpectrum</strong> (<em>2-D array</em>) – The spectrum to be corrected by the filter</p></li>
+<li><p><strong>transmissionSpectraofFilter</strong> (<em>2-D array</em>) – Transmission spectra of a filter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>2-D array of a dataSpectrum corrected for the transmission spectrum of filter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.filter_for_angle">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">filter_for_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pan_angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_angles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pan_angle_limit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tilt_angle_limit</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.filter_for_angle" title="Permalink to this definition"></a></dt>
+<dd><p>Filter data for angles that fall within a specified range. Parameter, x-angles, and y-angles need to be the same size and shape</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameter</strong> – float or 1d array of parameter interest</p></li>
+<li><p><strong>pan_angles</strong> – float or 1d array of angles to filter by</p></li>
+<li><p><strong>tilt_angles</strong> – float or 1d array of angles to filter by</p></li>
+<li><p><strong>pan_angle_limit</strong> – x-angle to limit filter</p></li>
+<li><p><strong>tilt_angle_limit</strong> – y-angle to limit filter</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Filtered data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.findIndicesofDuplicates">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">findIndicesofDuplicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.findIndicesofDuplicates" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.gas_attenuated_irradiance">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">gas_attenuated_irradiance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DU</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">absorption_coeff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irradiance_spectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.gas_attenuated_irradiance" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.generate_gas_transmission_spectrum">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">generate_gas_transmission_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DU</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs_coeff</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.generate_gas_transmission_spectrum" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.generate_ozone_transmission_spectrum">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">generate_ozone_transmission_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ozone_DU</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.generate_ozone_transmission_spectrum" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.get_coeffecients">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">get_coeffecients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">measured_angle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_angle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.get_coeffecients" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.get_jsc_from_quantum_efficiency">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">get_jsc_from_quantum_efficiency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quantum_efficiency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irradiance_spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'QE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.get_jsc_from_quantum_efficiency" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the short circuit current from an give quantum efficiency curve and irradiance spectrum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>quantum_efficiency</strong> (<em>ndarray</em>) – 2D array of Quantum Efficiency data of shape x = wavelength, y = quantum efficiency (%)</p></li>
+<li><p><strong>irradiance_spectrum</strong> (<em>ndarray</em>) – 2D array that has x = nm, y = W/cm^2/nm</p></li>
+<li><p><strong>interpolation_method</strong> (<em>ndarray</em>) – ‘QE’ interpolates the irradiance spectrum to the QE spacing whereas ‘Irr’ interpolates the quantum efficiency spectrum to the irradiance spectrum</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Integrated current in mA/cm^2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.get_jsc_from_spectral_response">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">get_jsc_from_spectral_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectral_response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irradiance_spectrum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SR'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.get_jsc_from_spectral_response" title="Permalink to this definition"></a></dt>
+<dd><p>Calculates the short circuit current density using give spectral response spectrum and irradiance spectrum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectral_response</strong> (<em>ndarray</em>) – spectral response data is x = nm and y = A/cm^2</p></li>
+<li><p><strong>(</strong><strong>ndarray</strong> (<em>irradiance_spectrum</em>) – 2D array that has x = nm, y = W/cm^2/nm</p></li>
+<li><p><strong>interpolation_method</strong> (<em>ndarray</em>) – ‘SR’ interpolates the irradiance spectrum to the spectral response spacing whereas ‘Irr’ interpolates the spectral response spectrum to the irradiance spectrum</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a single value that is in the units of mA/cm^2</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.get_ozone_correction_factor">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">get_ozone_correction_factor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ozone_attenuated_am0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_spectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qe</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolation_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'QE'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.get_ozone_correction_factor" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.get_temperature_coefficient">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">get_temperature_coefficient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperatures</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.get_temperature_coefficient" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.get_temperature_coefficient_Huber">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">get_temperature_coefficient_Huber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperatures</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.get_temperature_coefficient_Huber" title="Permalink to this definition"></a></dt>
+<dd><p>Fits a HuberRegressor to the data and returns the slope, intercept, score, and r_value.  The slope is the temperature coefficient</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameter</strong> (<em>np.ndarray</em>) – any solar parameter (e.g. Jsc, Voc, FF, PCE)</p></li>
+<li><p><strong>temperatures</strong> (<em>np.ndarray</em>) – temperature data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>dictionary containing the slope, intercept, score, and r_value of the fit where the slope is the temperature coefficient</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fits (dict)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.high_freq_data_df">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">high_freq_data_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selenium_flight_data_folder_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.high_freq_data_df" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.interpolate_larger_data_to_smaller_data">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">interpolate_larger_data_to_smaller_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">large_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">small_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.interpolate_larger_data_to_smaller_data" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.mg_m3_to_ppmV">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">mg_m3_to_ppmV</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mg_m3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molecular_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">47.997</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">273.15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.mg_m3_to_ppmV" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.ozone_attenuated_irradiance">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">ozone_attenuated_irradiance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ozone_DU</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith_angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">irradiance_spectrum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.ozone_attenuated_irradiance" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.pitch_from_sun_sensor">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">pitch_from_sun_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.pitch_from_sun_sensor" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.ppmV_to_mol_m3">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">ppmV_to_mol_m3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ppmV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">molecular_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">47.997</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp_K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">273.15</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.ppmV_to_mol_m3" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.sortTwoArrays">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">sortTwoArrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sortByThisArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrayToBeSorted</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.sortTwoArrays" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.standardize_selenium_dataframe">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">standardize_selenium_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataframe</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.standardize_selenium_dataframe" title="Permalink to this definition"></a></dt>
+<dd><p>Finds column names that may be labeled funny or similar from past naming conventions and standardizes them to a common naming convention</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – Pandas dataframe containing selenium data</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pandas dataframe containing selenium data with standardized column names</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dataframe (pd.DataFrame)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.total_ozone_above_pressure">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">total_ozone_above_pressure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ozone_profile_ppmV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pressure_limit_hPa</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.total_ozone_above_pressure" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.total_ozone_dobson_from_ppmV_vs_pressure">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">total_ozone_dobson_from_ppmV_vs_pressure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vmr_pressure</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.total_ozone_dobson_from_ppmV_vs_pressure" title="Permalink to this definition"></a></dt>
+<dd><p>Use conversions.pdf to convert vmr data to Dobson Units</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vmr_pressure</strong> – data from satellite in units vmr vs pressure</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>total gas in Dobson units</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.total_ozone_from_mol_m3_vs_altitude_km">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">total_ozone_from_mol_m3_vs_altitude_km</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mol_m3_altitude_km</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.total_ozone_from_mol_m3_vs_altitude_km" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="selenium.selenium_analysis.yaw_from_sun_sensor">
+<span class="sig-prename descclassname"><span class="pre">selenium.selenium_analysis.</span></span><span class="sig-name descname"><span class="pre">yaw_from_sun_sensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">TL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">BR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">TR</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#selenium.selenium_analysis.yaw_from_sun_sensor" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to selenium’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Don Walker.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
